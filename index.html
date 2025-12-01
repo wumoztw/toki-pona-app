@@ -3,39 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toki Pona Mastery - 成人學習版</title>
+    <title>Toki Pona Mastery - 從零開始學到會</title>
     
-    <!-- 引入 Tailwind CSS (樣式庫) -->
+    <!-- 1. 引入 Tailwind CSS (樣式) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 引入 React 和 ReactDOM -->
+    <!-- 2. 引入 React 核心 -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     
-    <!-- 引入 Babel (讓瀏覽器看懂 JSX) -->
+    <!-- 3. 引入 Babel (翻譯機) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- 4. 引入 Phosphor Icons (圖示庫 - 解決圖示無法顯示的問題) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        /* 自定義捲軸樣式 */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
-        body { font-family: system-ui, -apple-system, sans-serif; }
+        body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
-    <!-- 這裡是程式邏輯 -->
-    <script type="text/babel" data-type="module">
-        import React, { useState, useMemo } from 'https://esm.sh/react@18.2.0';
-        // 從 esm.sh 引入 Lucide React 圖示庫
-        import { 
-            Book, MessageSquare, Feather, Sun, Home, Users, Activity, Layers, 
-            Volume2, Search, ChevronRight, Hash, Palette, Zap, Globe, Briefcase, 
-            Clock, MapPin, HelpCircle, Menu, X, PenTool, FileText 
-        } from 'https://esm.sh/lucide-react@0.263.1?deps=react@18.2.0';
+    <!-- 這裡不使用 type="module"，改用單純的 text/babel，確保本地檔案也能執行 -->
+    <script type="text/babel">
+        const { useState, useMemo, useEffect } = React;
+
+        // --- 圖示組件封裝 (為了讓 React 程式碼保持整潔，我們建立對應的圖示元件) ---
+        const IconWrapper = ({ iconClass, size = 20, className = "" }) => (
+            <i className={`${iconClass} ${className}`} style={{ fontSize: size, verticalAlign: 'middle', display: 'inline-block' }}></i>
+        );
+
+        // 對應原本的 Lucide 圖示到 Phosphor Icons
+        const Book = (p) => <IconWrapper iconClass="ph-bold ph-book" {...p} />;
+        const MessageSquare = (p) => <IconWrapper iconClass="ph-bold ph-chat-circle" {...p} />;
+        const Feather = (p) => <IconWrapper iconClass="ph-bold ph-feather" {...p} />;
+        const Sun = (p) => <IconWrapper iconClass="ph-bold ph-sun" {...p} />;
+        const Home = (p) => <IconWrapper iconClass="ph-bold ph-house" {...p} />;
+        const Users = (p) => <IconWrapper iconClass="ph-bold ph-users" {...p} />;
+        const Activity = (p) => <IconWrapper iconClass="ph-bold ph-activity" {...p} />;
+        const Layers = (p) => <IconWrapper iconClass="ph-bold ph-stack" {...p} />;
+        const Volume2 = (p) => <IconWrapper iconClass="ph-bold ph-speaker-high" {...p} />;
+        const Search = (p) => <IconWrapper iconClass="ph-bold ph-magnifying-glass" {...p} />;
+        const ChevronRight = (p) => <IconWrapper iconClass="ph-bold ph-caret-right" {...p} />;
+        const Hash = (p) => <IconWrapper iconClass="ph-bold ph-hash" {...p} />;
+        const Palette = (p) => <IconWrapper iconClass="ph-bold ph-palette" {...p} />;
+        const Zap = (p) => <IconWrapper iconClass="ph-bold ph-lightning" {...p} />;
+        const Globe = (p) => <IconWrapper iconClass="ph-bold ph-globe" {...p} />;
+        const Briefcase = (p) => <IconWrapper iconClass="ph-bold ph-briefcase" {...p} />;
+        const Clock = (p) => <IconWrapper iconClass="ph-bold ph-clock" {...p} />;
+        const MapPin = (p) => <IconWrapper iconClass="ph-bold ph-map-pin" {...p} />;
+        const HelpCircle = (p) => <IconWrapper iconClass="ph-bold ph-question" {...p} />;
+        const Menu = (p) => <IconWrapper iconClass="ph-bold ph-list" {...p} />;
+        const X = (p) => <IconWrapper iconClass="ph-bold ph-x" {...p} />;
+        const PenTool = (p) => <IconWrapper iconClass="ph-bold ph-pen-nib" {...p} />;
+        const FileText = (p) => <IconWrapper iconClass="ph-bold ph-file-text" {...p} />;
+
 
         // --- 資料庫：Toki Pona 完整核心詞彙庫 ---
         const VOCAB_DATA = [
@@ -469,7 +496,7 @@
         const speak = (text) => {
           if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
-            // 移除括號內的說明文字，避免朗讀出來 (例如 "Level 1: " 或 "(我的一天):")
+            // 移除括號內的說明文字
             const cleanText = text.replace(/Set \d+ - Level \d+: /g, '').replace(/Level \d+: /g, '').replace(/\(.*?\):/g, '');
             
             const utterance = new SpeechSynthesisUtterance(cleanText);
@@ -477,7 +504,6 @@
             utterance.pitch = 1.0;
             
             const voices = window.speechSynthesis.getVoices();
-            // 優先順序：日文 > 西班牙文 > 義大利文 (母音單純，適合 Toki Pona)
             const preferredVoice = voices.find(v => 
               v.lang.includes('ja') || v.lang.includes('es') || v.lang.includes('it')
             );
@@ -490,16 +516,13 @@
         const App = () => {
           const [selectedCategory, setSelectedCategory] = useState(VOCAB_DATA[0]);
           const [searchTerm, setSearchTerm] = useState('');
-          const [activeTab, setActiveTab] = useState('learn'); // 'learn' or 'all'
+          const [activeTab, setActiveTab] = useState('learn');
           const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-          // 過濾邏輯
           const filteredWords = useMemo(() => {
             if (activeTab === 'learn') return selectedCategory.words;
-            
             const allWords = VOCAB_DATA.flatMap(cat => cat.words);
             if (!searchTerm) return allWords;
-            
             return allWords.filter(w => 
               w.tp.toLowerCase().includes(searchTerm.toLowerCase()) || 
               w.cn.includes(searchTerm)
