@@ -548,7 +548,7 @@
                     <span className="font-bold" style={{color: "#8a9ba8"}}>{masteredCount} / {totalWordsCount} 詞 ({masteryPercentage}%)</span>
                   </div>
                   <div className="w-full h-2 rounded-full overflow-hidden" style={{backgroundColor: "#e0dbd3"}}>
-                    <div className="h-full transition-all duration-500" style={{backgroundColor: "#8a9ba8"}} style={{ width: `${masteryPercentage}%` }}></div>
+                    <div className="h-full transition-all duration-500" style={{backgroundColor: "#8a9ba8", width: `${masteryPercentage}%`}}></div>
                   </div>
                 </div>
 
@@ -738,7 +738,7 @@
                     )}
 
                     {activeTab === 'all' && (
-                      <div className="relative w-36 sm:w-48 md:w-56">
+                      <div className="hidden md:block relative w-48 md:w-56">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{color: "#9e9590"}} />
                         <input 
                           type="text" 
@@ -753,7 +753,7 @@
                 </header>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth" style={{backgroundColor: "#faf9f7"}}>
+                <div className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8 scroll-smooth" style={{backgroundColor: "#faf9f7"}}>
                   <div className="max-w-6xl mx-auto">
                     
                     {/* === 1. LEARN MODE & ALL MODE === */}
@@ -779,33 +779,58 @@
 
                         {/* Vocabulary Grid */}
                         <div className="mb-6">
-                            {/* 行動端快速篩選列 (手機上置頂展示) */}
+                            {/* 行動端快速篩選列 (手機上置頂展示，具備磨砂和紙懸浮效果) */}
                             {(activeTab === "learn" || activeTab === "all") && (
-                              <div className="lg:hidden flex p-1 rounded-xl text-xs font-medium mb-4 w-full justify-between gap-1" style={{backgroundColor: "#ece8e2"}}>
-                                <button
-                                  onClick={() => setStatusFilter("all")}
-                                  className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "all" ? "bg-white text-[#2c2825] shadow-sm font-semibold" : "text-[#6b6460]"}`}
-                                >
-                                  全部
-                                </button>
-                                <button
-                                  onClick={() => setStatusFilter("mastered")}
-                                  className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "mastered" ? "bg-[#7a9b80] text-white shadow-sm font-semibold" : "text-[#6b6460]"}`}
-                                >
-                                  已學 ({masteredCount})
-                                </button>
-                                <button
-                                  onClick={() => setStatusFilter("unmastered")}
-                                  className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "unmastered" ? "bg-[#8a9ba8] text-white shadow-sm font-semibold" : "text-[#6b6460]"}`}
-                                >
-                                  未學 ({totalWordsCount - masteredCount})
-                                </button>
-                                <button
-                                  onClick={() => setStatusFilter("noted")}
-                                  className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "noted" ? "bg-[#b09070] text-white shadow-sm font-semibold" : "text-[#6b6460]"}`}
-                                >
-                                  筆記 ({notedCount})
-                                </button>
+                              <div className="lg:hidden sticky top-0 z-10 pt-1 pb-2.5 mb-3 -mx-4 px-4 backdrop-blur-md transition-all" style={{backgroundColor: "rgba(250, 249, 247, 0.94)"}}>
+                                <div className="flex p-1 rounded-xl text-[11px] sm:text-xs font-medium w-full justify-between gap-1 shadow-sm" style={{backgroundColor: "#ece8e2", border: "1px solid #e0dbd3"}}>
+                                  <button
+                                    onClick={() => setStatusFilter("all")}
+                                    className={`flex-1 py-1.5 rounded-lg transition-all text-center truncate ${statusFilter === "all" ? "bg-white text-[#2c2825] shadow-sm font-semibold" : "text-[#6b6460]"}`}
+                                  >
+                                    全部
+                                  </button>
+                                  <button
+                                    onClick={() => setStatusFilter("mastered")}
+                                    className={`flex-1 py-1.5 rounded-lg transition-all text-center truncate ${statusFilter === "mastered" ? "bg-[#7a9b80] text-white shadow-sm font-semibold" : "text-[#6b6460]"}`}
+                                  >
+                                    已學 ({masteredCount})
+                                  </button>
+                                  <button
+                                    onClick={() => setStatusFilter("unmastered")}
+                                    className={`flex-1 py-1.5 rounded-lg transition-all text-center truncate ${statusFilter === "unmastered" ? "bg-[#8a9ba8] text-white shadow-sm font-semibold" : "text-[#6b6460]"}`}
+                                  >
+                                    未學 ({totalWordsCount - masteredCount})
+                                  </button>
+                                  <button
+                                    onClick={() => setStatusFilter("noted")}
+                                    className={`flex-1 py-1.5 rounded-lg transition-all text-center truncate ${statusFilter === "noted" ? "bg-[#b09070] text-white shadow-sm font-semibold" : "text-[#6b6460]"}`}
+                                  >
+                                    筆記 ({notedCount})
+                                  </button>
+                                </div>
+
+                                {/* 手機版全詞彙搜尋框 */}
+                                {activeTab === 'all' && (
+                                  <div className="md:hidden relative mt-2">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{color: "#9e9590"}} />
+                                    <input 
+                                      type="text" 
+                                      placeholder="搜尋單字、釋義或筆記..." 
+                                      value={searchTerm}
+                                      onChange={(e) => setSearchTerm(e.target.value)}
+                                      className="pl-9 pr-8 py-2 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-[#8a9ba8] w-full transition-all shadow-sm"
+                                      style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3", color: "#2c2825"}}
+                                    />
+                                    {searchTerm && (
+                                      <button 
+                                        onClick={() => setSearchTerm('')}
+                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[#9e9590] hover:text-[#2c2825]"
+                                      >
+                                        <X size={14} />
+                                      </button>
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             )}
                            <div className="flex justify-between items-center mb-4">
@@ -827,7 +852,7 @@
                                   <div 
                                     key={idx}
                                     onClick={() => speak(word.tp)}
-                                    className={`group bg-white rounded-xl border p-5 hover:shadow-sm transition-all text-left relative overflow-hidden cursor-pointer flex flex-col justify-between
+                                    className={`group bg-white rounded-xl border p-4 sm:p-5 hover:shadow-sm transition-all text-left relative overflow-hidden cursor-pointer flex flex-col justify-between active:scale-[0.99]
                                       ${isMastered ? 'border-[#7a9b80] bg-[#f0f5f1]/50' : 'border-[#e0dbd3] hover:border-[#8a9ba8]'}
                                     `}
                                   >
@@ -854,7 +879,7 @@
                                               }
                                             }}
                                             title="新增或編輯個人筆記"
-                                            className={`p-1.5 rounded-full transition-all ${
+                                            className={`p-2 sm:p-1.5 rounded-full transition-all ${
                                               notes[word.key] 
                                                 ? 'bg-[#f0e8de] text-[#b09070] hover:bg-[#e8d8c8] shadow-sm' 
                                                 : 'bg-[#ece8e2] text-[#9e9590] hover:bg-[#f0e8de] hover:text-[#b09070]'
@@ -867,7 +892,7 @@
                                           <button
                                             onClick={(e) => toggleMastered(word.key, e)}
                                             title={isMastered ? '標記為未學會' : '標記為已學會'}
-                                            className={`p-1.5 rounded-full transition-all ${isMastered ? 'bg-[#7a9b80] text-white shadow-sm' : 'bg-[#ece8e2] text-[#9e9590] hover:bg-[#f0f5f1] hover:text-[#7a9b80]'}`}
+                                            className={`p-2 sm:p-1.5 rounded-full transition-all ${isMastered ? 'bg-[#7a9b80] text-white shadow-sm' : 'bg-[#ece8e2] text-[#9e9590] hover:bg-[#f0f5f1] hover:text-[#7a9b80]'}`}
                                           >
                                             <Check size={14} />
                                           </button>
@@ -1230,7 +1255,7 @@
                               </div>
 
                               <div className="w-full h-2 rounded-full mb-8 overflow-hidden" style={{backgroundColor: "#e0dbd3"}}>
-                                <div className="h-full transition-all duration-300" style={{backgroundColor: "#8a9ba8"}} style={{ width: `${progressPercent}%` }}></div>
+                                <div className="h-full transition-all duration-300" style={{backgroundColor: "#8a9ba8", width: `${progressPercent}%`}}></div>
                               </div>
 
                               {/* Question Card */}
@@ -1254,7 +1279,7 @@
                                     >
                                       <Volume2 size={40} className="group-hover:animate-pulse" />
                                     </button>
-                                    <p className="text-xs text-purple-600 font-medium mt-4">點擊按鈕重複聆聽發音</p>
+                                    <p className="text-xs font-medium mt-4" style={{color: "#8a9ba8"}}>點擊按鈕重複聆聽發音</p>
                                   </div>
                                 ) : currentQ.type === 'cloze' ? (
                                   <div className="mb-4">
@@ -1267,7 +1292,7 @@
                                   </div>
                                 ) : currentQ.type === 'sitelen_to_tp' ? (
                                   <div className="py-4">
-                                    <div className="sitelen-pona text-7xl text-amber-500 mb-2 leading-none select-none drop-shadow-sm">
+                                    <div className="sitelen-pona text-6xl sm:text-7xl mb-2 leading-none select-none drop-shadow-sm" style={{color: "#b09070"}}>
                                       {currentQ.questionText}
                                     </div>
                                     <span className="text-xs" style={{color: "#9e9590"}}>這是哪一個單字的象形符號？</span>
@@ -1310,7 +1335,7 @@
                                       key={idx}
                                       onClick={() => handleAnswerSelect(option)}
                                       disabled={isAnswered}
-                                      className={`p-4 rounded-xl border-2 font-medium text-lg transition-all text-center flex items-center justify-center min-h-[64px] ${btnStyle}`}
+                                      className={`p-3.5 sm:p-4 rounded-xl border-2 font-medium text-base sm:text-lg transition-all text-center flex items-center justify-center min-h-[56px] sm:min-h-[64px] active:scale-[0.98] ${btnStyle}`}
                                       style={btnStyleObj}
                                     >
                                       {isSitelenOption ? (
@@ -1331,11 +1356,11 @@
                                   <div>
                                     <div className="flex items-center gap-2 mb-1">
                                       {selectedOption === currentQ.correctAnswer ? (
-                                        <span className="text-emerald-600 font-bold flex items-center gap-1">
+                                        <span className="font-bold flex items-center gap-1" style={{color: "#7a9b80"}}>
                                           <Check size={18} /> 答對了！ Pona!
                                         </span>
                                       ) : (
-                                        <span className="text-rose-600 font-bold flex items-center gap-1">
+                                        <span className="font-bold flex items-center gap-1" style={{color: "#b08088"}}>
                                           <X size={18} /> 答錯了！正確答案是：
                                           {(currentQ.type === 'cn_to_sitelen' || currentQ.type === 'listening_to_sitelen') ? (
                                             <span className="sitelen-pona text-2xl text-amber-500 ml-1 leading-none">{currentQ.correctAnswer}</span>
@@ -1361,7 +1386,7 @@
 
                                   <button
                                     onClick={handleNextQuestion}
-                                    className="px-6 py-2.5 text-white font-bold rounded-xl shadow-sm transition-all whitespace-nowrap hover:opacity-90" style={{backgroundColor: "#2c2825"}}
+                                    className="w-full sm:w-auto px-6 py-3 text-white font-bold rounded-xl shadow-sm transition-all whitespace-nowrap hover:opacity-90 active:scale-95 text-center" style={{backgroundColor: "#2c2825"}}
                                   >
                                     {currentQuizIndex + 1 < quizQuestions.length ? '下一題' : '查看結算'}
                                   </button>
@@ -1405,7 +1430,7 @@
                                     const wrongItems = wrongQuestions.map(q => q.item);
                                     startQuiz(wrongItems);
                                   }}
-                                  className="px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
+                                  className="px-6 py-3 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 hover:opacity-90 active:scale-95" style={{backgroundColor: "#b08088"}}
                                 >
                                   <X size={20} />
                                   複習錯題 ({wrongQuestions.length}題)
@@ -1428,17 +1453,17 @@
                                     const tpWord = wq.item?.tp || wq.correctAnswer;
                                     const pureTp = (tpWord || '').replace(/\s*\(.*?\)/, '').toLowerCase();
                                     return (
-                                      <div key={wIdx} className="p-3 bg-rose-50/80 border border-rose-200 rounded-xl flex items-center justify-between text-xs">
+                                      <div key={wIdx} className="p-3 rounded-xl flex items-center justify-between text-xs" style={{backgroundColor: "#faf5f6", border: "1px solid #e8d0d4"}}>
                                         <div className="flex items-center gap-2.5">
-                                          <span className="sitelen-pona text-2xl text-amber-600 leading-none select-none">{pureTp}</span>
+                                          <span className="sitelen-pona text-2xl leading-none select-none" style={{color: "#b09070"}}>{pureTp}</span>
                                           <div>
                                             <span className="font-bold font-serif mr-1.5" style={{color: "#2c2825"}}>{tpWord}</span>
                                             <span className="" style={{color: "#6b6460"}}>{getMeaning(wq.item)}</span>
                                           </div>
                                         </div>
-                                        <span className="text-rose-600 font-semibold font-mono">
+                                        <span className="font-semibold font-mono" style={{color: "#b08088"}}>
                                           {(wq.type === 'cn_to_sitelen' || wq.type === 'listening_to_sitelen') ? (
-                                            <span className="sitelen-pona text-xl text-amber-600">{wq.correctAnswer}</span>
+                                            <span className="sitelen-pona text-xl" style={{color: "#b09070"}}>{wq.correctAnswer}</span>
                                           ) : (
                                             `正解: ${wq.correctAnswer}`
                                           )}
@@ -1457,6 +1482,67 @@
 
                   </div>
                 </div>
+              
+                {/* ==================== 行動端底部導航列 (Mobile Bottom Nav) ==================== */}
+                <nav className="md:hidden flex items-center justify-around h-16 border-t z-20 flex-shrink-0 select-none shadow-[0_-2px_10px_rgba(44,40,37,0.04)]" style={{backgroundColor: '#f0ede8', borderColor: '#e0dbd3'}}>
+                  {/* 1. 學習 (Learn) */}
+                  <button
+                    onClick={() => {
+                      setActiveTab('learn');
+                      if (!selectedCategory) setSelectedCategory(window.VOCAB_DATA[0]);
+                    }}
+                    className={`flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+                      activeTab === 'learn' ? 'text-[#2c2825] font-bold' : 'text-[#9e9590] hover:text-[#6b6460]'
+                    }`}
+                  >
+                    <div className={`p-1 rounded-lg transition-all ${activeTab === 'learn' ? 'bg-[#faf9f7] shadow-sm' : ''}`}>
+                      <Book size={18} className={activeTab === 'learn' ? 'text-[#8a9ba8]' : 'text-[#9e9590]'} />
+                    </div>
+                    <span className="text-[10px] mt-0.5 tracking-wider">學習</span>
+                  </button>
+
+                  {/* 2. 全詞彙字典 (Dictionary) */}
+                  <button
+                    onClick={() => {
+                      setActiveTab('all');
+                    }}
+                    className={`flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+                      activeTab === 'all' ? 'text-[#2c2825] font-bold' : 'text-[#9e9590] hover:text-[#6b6460]'
+                    }`}
+                  >
+                    <div className={`p-1 rounded-lg transition-all ${activeTab === 'all' ? 'bg-[#faf9f7] shadow-sm' : ''}`}>
+                      <Search size={18} className={activeTab === 'all' ? 'text-[#8a9ba8]' : 'text-[#9e9590]'} />
+                    </div>
+                    <span className="text-[10px] mt-0.5 tracking-wider">字典</span>
+                  </button>
+
+                  {/* 3. 隨堂測驗 (Quiz) */}
+                  <button
+                    onClick={() => {
+                      setActiveTab('quiz');
+                      setQuizState('start');
+                    }}
+                    className={`flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+                      activeTab === 'quiz' ? 'text-[#2c2825] font-bold' : 'text-[#9e9590] hover:text-[#6b6460]'
+                    }`}
+                  >
+                    <div className={`p-1 rounded-lg transition-all ${activeTab === 'quiz' ? 'bg-[#faf9f7] shadow-sm' : ''}`}>
+                      <Zap size={18} className={activeTab === 'quiz' ? 'text-[#b09070]' : 'text-[#9e9590]'} />
+                    </div>
+                    <span className="text-[10px] mt-0.5 tracking-wider">測驗</span>
+                  </button>
+
+                  {/* 4. 設定與章節選單 (Menu / Settings) */}
+                  <button
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="flex flex-col items-center justify-center flex-1 py-1 text-[#9e9590] hover:text-[#6b6460] transition-all"
+                  >
+                    <div className="p-1 rounded-lg">
+                      <Sliders size={18} className="text-[#9e9590]" />
+                    </div>
+                    <span className="text-[10px] mt-0.5 tracking-wider">設定</span>
+                  </button>
+                </nav>
               </main>
             </div>
           );
