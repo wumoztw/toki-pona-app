@@ -7,23 +7,6 @@
     
     <!-- 1. 引入 Tailwind CSS (樣式) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Washi Design System Tailwind Config -->
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              washi: { bg: '#faf9f7', surface: '#f5f3ef', sidebar: '#f0ede8', border: '#e0dbd3', hover: '#ece8e2' },
-              sumi: { DEFAULT: '#2c2825', secondary: '#6b6460', tertiary: '#9e9590' },
-              'washi-accent': '#8a9ba8',
-              'washi-amber': '#b09070',
-              'washi-green': '#7a9b80',
-              'washi-rose': '#b08088',
-            },
-          },
-        },
-      };
-    </script>
     
     <!-- 2. 引入 React 核心 -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -58,10 +41,10 @@
             text-rendering: optimizeLegibility;
         }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f0ede8; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c8c3bc; border-radius: 3px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #b5a8a0; }
-        body { font-family: system-ui, -apple-system, sans-serif; background-color: #faf9f7; color: #2c2825; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+        body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; }
     </style>
 </head>
 <body>
@@ -517,43 +500,43 @@
 
 
           return (
-            <div className="flex h-screen text-[#2c2825] font-sans overflow-hidden" style={{backgroundColor: '#faf9f7'}}>
+            <div className="flex h-screen bg-slate-50 text-slate-900 font-sans overflow-hidden">
               
               {/* Mobile Sidebar Toggle */}
-              <div className={`fixed inset-0 bg-black/30 z-20 md:hidden transition-opacity ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
+              <div className={`fixed inset-0 bg-black/50 z-20 md:hidden transition-opacity ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
                    onClick={() => setIsSidebarOpen(false)} />
 
               {/* Sidebar Navigation */}
               <aside className={`
-                absolute md:relative z-30 w-72 flex flex-col h-full transition-transform duration-300
+                absolute md:relative z-30 w-72 bg-slate-900 text-slate-300 flex flex-col shadow-2xl h-full transition-transform duration-300
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-              `} style={{backgroundColor: '#f0ede8', borderRight: '1px solid #e0dbd3'}}>
-                <div className="p-6 flex justify-between items-center" style={{borderBottom: "1px solid #e0dbd3", backgroundColor: "#f0ede8"}}>
+              `}>
+                <div className="p-6 border-b border-slate-800 flex justify-between items-center">
                   <div>
-                    <h1 className="text-2xl font-bold text-[#2c2825] tracking-wider flex items-center gap-2">
-                      <Book className="text-[#8a9ba8]" />
+                    <h1 className="text-2xl font-bold text-white tracking-wider flex items-center gap-2">
+                      <Book className="text-indigo-400" />
                       TOKI PONA
                     </h1>
-                    <p className="text-xs mt-1 uppercase tracking-widest" style={{color: "#9e9590"}}>留白習字 · 簡約之語</p>
+                    <p className="text-xs text-slate-500 mt-1 uppercase tracking-widest">Mastery Edition</p>
                   </div>
-                  <button onClick={() => setIsSidebarOpen(false)} className="md:hidden hover:opacity-70" style={{color: "#9e9590"}}>
+                  <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-slate-400 hover:text-white">
                     <X size={24} />
                   </button>
                 </div>
 
                 {/* 學習進度摘要卡片 */}
-                <div className="px-6 py-4" style={{backgroundColor: "#ece8e2", borderBottom: "1px solid #e0dbd3"}}>
-                  <div className="flex justify-between text-xs font-bold mb-1.5" style={{color: "#6b6460"}}>
+                <div className="px-6 py-4 bg-slate-950 border-b border-slate-800">
+                  <div className="flex justify-between text-xs font-bold text-slate-400 mb-1.5">
                     <span>學習進度掌握</span>
-                    <span className="font-bold" style={{color: "#8a9ba8"}}>{masteredCount} / {totalWordsCount} 詞 ({masteryPercentage}%)</span>
+                    <span className="text-indigo-400">{masteredCount} / {totalWordsCount} 詞 ({masteryPercentage}%)</span>
                   </div>
-                  <div className="w-full h-2 rounded-full overflow-hidden" style={{backgroundColor: "#e0dbd3"}}>
-                    <div className="h-full transition-all duration-500" style={{backgroundColor: "#8a9ba8"}} style={{ width: `${masteryPercentage}%` }}></div>
+                  <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div className="bg-indigo-500 h-full transition-all duration-500" style={{ width: `${masteryPercentage}%` }}></div>
                   </div>
                 </div>
 
-                <nav className="flex-1 overflow-y-auto py-4 space-y-1 custom-scrollbar" style={{backgroundColor: "#f0ede8"}}>
-                  <div className="px-6 mb-2 text-xs font-bold uppercase tracking-wider" style={{color: "#9e9590", letterSpacing: "0.12em"}}>章節導航</div>
+                <nav className="flex-1 overflow-y-auto py-4 space-y-1 custom-scrollbar">
+                  <div className="px-6 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Learning Modules</div>
                   {window.VOCAB_DATA.map(cat => (
                     <button
                       key={cat.id}
@@ -565,18 +548,18 @@
                       }}
                       className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-all
                         ${selectedCategory.id === cat.id && activeTab === 'learn'
-                          ? 'text-[#2c2825] font-semibold' + ' ' + 'bg-[#faf9f7]' + ' ' + 'border-l-[3px] border-[#8a9ba8]' 
-                          : 'hover:bg-[#ece8e2] text-[#6b6460] hover:text-[#2c2825]'}
+                          ? 'bg-indigo-600 text-white border-r-4 border-indigo-300 shadow-inner' 
+                          : 'hover:bg-slate-800 hover:text-white'}
                       `}
                     >
-                      <span className={selectedCategory.id === cat.id && activeTab === 'learn' ? 'text-[#8a9ba8]' : 'text-[#9e9590]'}>
+                      <span className={selectedCategory.id === cat.id && activeTab === 'learn' ? 'text-white' : 'text-slate-500'}>
                         {renderIcon(cat.icon)}
                       </span>
                       <span className="truncate">{cat.title.split('(')[0]}</span>
                     </button>
                   ))}
                   
-                  <div className="mt-6 px-6 mb-2 text-xs font-bold uppercase tracking-wider" style={{color: "#9e9590", letterSpacing: "0.12em"}}>工具 & 練習</div>
+                  <div className="mt-6 px-6 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Tools & Practice</div>
                   <button
                      onClick={() => {
                        setActiveTab('all');
@@ -584,11 +567,11 @@
                      }}
                      className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors
                         ${activeTab === 'all'
-                          ? 'text-[#2c2825] font-semibold bg-[#faf9f7] border-l-[3px] border-[#8a9ba8]' 
-                          : 'hover:bg-[#ece8e2] text-[#6b6460] hover:text-[#2c2825]'}
+                          ? 'bg-slate-700 text-white border-r-4 border-slate-400' 
+                          : 'hover:bg-slate-800 hover:text-white'}
                       `}
                   >
-                    <Search size={20} className={activeTab === 'all' ? 'text-[#8a9ba8]' : 'text-[#9e9590]'} />
+                    <Search size={20} className={activeTab === 'all' ? 'text-white' : 'text-slate-500'} />
                     <span>全詞彙字典 (Dictionary)</span>
                   </button>
 
@@ -600,57 +583,57 @@
                      }}
                      className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors
                         ${activeTab === 'quiz'
-                          ? 'text-[#2c2825] font-semibold bg-[#faf9f7] border-l-[3px] border-[#b09070]' 
-                          : 'hover:bg-[#ece8e2] text-[#6b6460] hover:text-[#2c2825]'}
+                          ? 'bg-purple-600 text-white border-r-4 border-purple-300' 
+                          : 'hover:bg-slate-800 hover:text-white'}
                       `}
                   >
-                    <Zap size={20} className={activeTab === 'quiz' ? 'text-[#b09070]' : 'text-[#b09070]'} />
+                    <Zap size={20} className={activeTab === 'quiz' ? 'text-white' : 'text-purple-400'} />
                     <span>隨堂測驗 (Quiz Mode)</span>
                   </button>
                 </nav>
 
                 {/* 顯示與語言設定 (Sidebar Settings) */}
-                <div className="p-4 text-xs flex-shrink-0" style={{borderTop: "1px solid #e0dbd3", backgroundColor: "#f0ede8"}}>
-                  <div className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5" style={{color: "#6b6460", letterSpacing: "0.1em"}}>
-                    <Sliders size={14} style={{color: "#9e9590"}} />
+                <div className="p-4 border-t border-slate-800 bg-slate-900 text-xs flex-shrink-0">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
+                    <Sliders size={14} className="text-slate-400" />
                     <span>偏好與顯示設定</span>
                   </div>
 
                   {/* Sitelen Pona Toggle */}
-                  <div className="mb-3 p-2.5 rounded-xl flex items-center justify-between" style={{backgroundColor: "#ece8e2", border: "1px solid #e0dbd3"}}>
+                  <div className="mb-3 bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <span className="sitelen-pona text-2xl text-amber-400 leading-none select-none flex-shrink-0">toki</span>
                       <div className="min-w-0">
-                        <div className="font-bold text-xs truncate" style={{color: "#2c2825"}}>Sitelen Pona</div>
-                        <div className="text-[10px]" style={{color: "#9e9590"}}>象形文字顯示</div>
+                        <div className="font-bold text-slate-200 text-xs truncate">Sitelen Pona</div>
+                        <div className="text-[10px] text-slate-400">象形文字顯示</div>
                       </div>
                     </div>
                     <button
                       onClick={() => setShowSitelen(prev => !prev)}
                       className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 flex-shrink-0 ${
                         showSitelen 
-                          ? 'bg-[#b09070] text-white shadow-md ring-2 ring-[#b09070]/30' 
-                          : 'text-[#9e9590] hover:text-[#2c2825]' + ' ' + 'border border-[#e0dbd3] hover:bg-[#ece8e2]'
+                          ? 'bg-amber-500 text-slate-950 shadow-md ring-2 ring-amber-400/40' 
+                          : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
                       }`}
                       title={showSitelen ? '點擊關閉象形文字' : '點擊開啟象形文字'}
                     >
-                      <span className={`w-1.5 h-1.5 rounded-full ${showSitelen ? 'bg-white' : 'bg-[#b5a8a0]'}`}></span>
+                      <span className={`w-1.5 h-1.5 rounded-full ${showSitelen ? 'bg-slate-950' : 'bg-slate-500'}`}></span>
                       <span>{showSitelen ? '已開啟' : '已關閉'}</span>
                     </button>
                   </div>
 
                   {/* Language Selector */}
-                  <div className="p-2.5 rounded-xl" style={{backgroundColor: "#ece8e2", border: "1px solid #e0dbd3"}}>
+                  <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-bold text-xs flex items-center gap-1.5" style={{color: "#2c2825"}}>
-                        <Globe size={13} style={{color: "#8a9ba8"}} />
+                      <span className="font-bold text-slate-300 text-xs flex items-center gap-1.5">
+                        <Globe size={13} className="text-indigo-400" />
                         釋義語言
                       </span>
-                      <span className="text-[10px]" style={{color: "#6b6460"}}>
+                      <span className="text-[10px] text-slate-400">
                         {lang === 'zh' ? '繁體中文' : lang === 'en' ? 'English' : '日本語'}
                       </span>
                     </div>
-                    <div className="grid grid-cols-3 gap-1 p-1 rounded-lg" style={{backgroundColor: "#f0ede8", border: "1px solid #e0dbd3"}}>
+                    <div className="grid grid-cols-3 gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800/80">
                       {[
                         { id: 'zh', label: '繁中' },
                         { id: 'en', label: 'EN' },
@@ -661,8 +644,8 @@
                           onClick={() => setLang(l.id)}
                           className={`py-1 rounded text-center text-[11px] font-semibold transition-all ${
                             lang === l.id 
-                              ? 'bg-[#8a9ba8] text-white shadow-sm' 
-                              : 'text-[#6b6460] hover:text-[#2c2825] hover:bg-[#ece8e2]'
+                              ? 'bg-indigo-600 text-white shadow' 
+                              : 'text-slate-400 hover:text-white hover:bg-slate-800'
                           }`}
                         >
                           {l.label}
@@ -672,7 +655,7 @@
                   </div>
                 </div>
 
-                <div className="p-4 text-xs" style={{borderTop: "1px solid #e0dbd3", backgroundColor: "#ece8e2", color: "#9e9590"}}>
+                <div className="p-4 border-t border-slate-800 text-xs text-slate-500 bg-slate-950">
                   <div className="flex justify-between">
                     <span>Toki Pona App</span>
                     <span>v2.5 LocalStorage</span>
@@ -681,19 +664,19 @@
               </aside>
 
               {/* Main Content Area */}
-              <main className="flex-1 flex flex-col h-full overflow-hidden w-full relative" style={{backgroundColor: "#faf9f7"}}>
+              <main className="flex-1 flex flex-col h-full overflow-hidden w-full relative">
                 
                 {/* Top Bar */}
-                <header className="h-16 border-b flex items-center justify-between px-3 md:px-8 z-10 flex-shrink-0" style={{backgroundColor: "#faf9f7", borderColor: "#e0dbd3", boxShadow: "0 1px 3px rgba(44,40,37,0.06)"}}>
+                <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-3 md:px-8 shadow-sm z-10 flex-shrink-0">
                   <div className="flex items-center gap-2 md:gap-4 min-w-0 mr-2">
-                     <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-1.5 rounded-lg flex-shrink-0 hover:bg-[#ece8e2]" style={{color: "#6b6460"}}>
+                     <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-1.5 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100 flex-shrink-0">
                        <Menu size={22} />
                      </button>
                      
-                     <h2 className="text-base sm:text-lg md:text-xl font-bold flex items-center gap-2 truncate" style={{color: "#2c2825"}}>
+                     <h2 className="text-base sm:text-lg md:text-xl font-bold text-slate-800 flex items-center gap-2 truncate">
                       {activeTab === 'learn' ? (
                         <>
-                          <span className={`p-1.5 rounded-lg bg-[#8a9ba8] text-white shadow-sm hidden md:block flex-shrink-0`}>
+                          <span className={`p-1.5 rounded-lg ${selectedCategory.color} text-white shadow-sm hidden md:block flex-shrink-0`}>
                             {renderIcon(selectedCategory.icon)}
                           </span>
                           <span className="truncate">{selectedCategory.title}</span>
@@ -709,28 +692,28 @@
                   <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                     {/* 快速篩選列 (在桌面端 md 以上顯示於 header) */}
                     {(activeTab === 'learn' || activeTab === 'all') && (
-                      <div className="hidden md:flex p-1 rounded-lg text-xs font-medium flex-shrink-0" style={{backgroundColor: "#ece8e2"}}>
+                      <div className="hidden md:flex bg-slate-100 p-1 rounded-lg text-xs font-medium flex-shrink-0">
                         <button
                           onClick={() => setStatusFilter('all')}
-                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'all' ? 'bg-white text-[#2c2825] shadow-sm font-semibold' : 'text-[#9e9590] hover:text-[#2c2825]'}`}
+                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'all' ? 'bg-white text-slate-800 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-800'}`}
                         >
                           全部
                         </button>
                         <button
                           onClick={() => setStatusFilter('mastered')}
-                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'mastered' ? 'bg-[#7a9b80] text-white shadow-sm font-semibold' : 'text-[#9e9590] hover:text-[#2c2825]'}`}
+                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'mastered' ? 'bg-emerald-600 text-white shadow-sm font-bold' : 'text-slate-500 hover:text-slate-800'}`}
                         >
                           已學會 ({masteredCount})
                         </button>
                         <button
                           onClick={() => setStatusFilter('unmastered')}
-                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'unmastered' ? 'bg-[#8a9ba8] text-white shadow-sm font-semibold' : 'text-[#9e9590] hover:text-[#2c2825]'}`}
+                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'unmastered' ? 'bg-indigo-600 text-white shadow-sm font-bold' : 'text-slate-500 hover:text-slate-800'}`}
                         >
                           未學會 ({totalWordsCount - masteredCount})
                         </button>
                         <button
                           onClick={() => setStatusFilter('noted')}
-                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'noted' ? 'bg-[#b09070] text-white shadow-sm font-semibold' : 'text-[#9e9590] hover:text-[#2c2825]'}`}
+                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'noted' ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-800'}`}
                         >
                           筆記 ({notedCount})
                         </button>
@@ -739,13 +722,13 @@
 
                     {activeTab === 'all' && (
                       <div className="relative w-36 sm:w-48 md:w-56">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{color: "#9e9590"}} />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                         <input 
                           type="text" 
                           placeholder="搜尋單字..." 
                           value={searchTerm}
                           onChange={(e) => setSearchTerm(e.target.value)}
-                          className="pl-9 pr-4 py-1.5 rounded-full text-sm focus:ring-2 focus:ring-[#8a9ba8] w-full transition-all" style={{backgroundColor: "#ece8e2", border: "1px solid #e0dbd3", color: "#2c2825"}}
+                          className="pl-9 pr-4 py-1.5 bg-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-indigo-500 w-full transition-all"
                         />
                       </div>
                     )}
@@ -753,7 +736,7 @@
                 </header>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth" style={{backgroundColor: "#faf9f7"}}>
+                <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-50 scroll-smooth">
                   <div className="max-w-6xl mx-auto">
                     
                     {/* === 1. LEARN MODE & ALL MODE === */}
@@ -761,16 +744,16 @@
                       <>
                         {/* Description Area (Only in Learn Mode) */}
                         {activeTab === 'learn' && (
-                          <div className="mb-8 p-6 rounded-xl shadow-sm flex flex-col md:flex-row justify-between items-start gap-4" style={{backgroundColor: "#ffffff", borderLeft: "4px solid #8a9ba8", border: "1px solid #e0dbd3", borderLeftWidth: "4px", borderLeftColor: "#8a9ba8"}}>
+                          <div className="mb-8 bg-white p-6 rounded-xl border-l-4 border-indigo-500 shadow-sm flex flex-col md:flex-row justify-between items-start gap-4">
                             <div>
-                              <h3 className="text-lg font-bold mb-1" style={{color: "#2c2825"}}>本單元簡介</h3>
-                              <p className="leading-relaxed" style={{color: "#6b6460"}}>{selectedCategory.description}</p>
+                              <h3 className="text-lg font-bold text-slate-800 mb-1">本單元簡介</h3>
+                              <p className="text-slate-600 leading-relaxed">{selectedCategory.description}</p>
                             </div>
                             <div className="flex gap-2 flex-wrap">
-                               <div className="text-xs font-mono px-3 py-1 rounded-full border font-bold whitespace-nowrap" style={{backgroundColor: "#ece8e2", color: "#8a9ba8", borderColor: "#e0dbd3"}}>
+                               <div className="text-xs font-mono bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full border border-indigo-100 font-bold whitespace-nowrap">
                                 {selectedCategory.words.length} 單字
                               </div>
-                              <div className="text-xs font-mono px-3 py-1 rounded-full border font-bold whitespace-nowrap" style={{backgroundColor: "#f0f5f1", color: "#7a9b80", borderColor: "#c8dbc8"}}>
+                              <div className="text-xs font-mono bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full border border-emerald-100 font-bold whitespace-nowrap">
                                 {selectedCategory.sentences.length} 例句/短文
                               </div>
                             </div>
@@ -781,43 +764,43 @@
                         <div className="mb-6">
                             {/* 行動端快速篩選列 (手機上置頂展示) */}
                             {(activeTab === "learn" || activeTab === "all") && (
-                              <div className="lg:hidden flex p-1 rounded-xl text-xs font-medium mb-4 w-full justify-between gap-1" style={{backgroundColor: "#ece8e2"}}>
+                              <div className="lg:hidden flex bg-slate-200/80 p-1 rounded-xl text-xs font-medium mb-4 w-full justify-between gap-1">
                                 <button
                                   onClick={() => setStatusFilter("all")}
-                                  className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "all" ? "bg-white text-[#2c2825] shadow-sm font-semibold" : "text-[#6b6460]"}`}
+                                  className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "all" ? "bg-white text-slate-800 shadow-sm font-bold" : "text-slate-600"}`}
                                 >
                                   全部
                                 </button>
                                 <button
                                   onClick={() => setStatusFilter("mastered")}
-                                  className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "mastered" ? "bg-[#7a9b80] text-white shadow-sm font-semibold" : "text-[#6b6460]"}`}
+                                  className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "mastered" ? "bg-emerald-600 text-white shadow-sm font-bold" : "text-slate-600"}`}
                                 >
                                   已學 ({masteredCount})
                                 </button>
                                 <button
                                   onClick={() => setStatusFilter("unmastered")}
-                                  className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "unmastered" ? "bg-[#8a9ba8] text-white shadow-sm font-semibold" : "text-[#6b6460]"}`}
+                                  className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "unmastered" ? "bg-indigo-600 text-white shadow-sm font-bold" : "text-slate-600"}`}
                                 >
                                   未學 ({totalWordsCount - masteredCount})
                                 </button>
                                 <button
                                   onClick={() => setStatusFilter("noted")}
-                                  className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "noted" ? "bg-[#b09070] text-white shadow-sm font-semibold" : "text-[#6b6460]"}`}
+                                  className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "noted" ? "bg-amber-500 text-slate-950 shadow-sm font-bold" : "text-slate-600"}`}
                                 >
                                   筆記 ({notedCount})
                                 </button>
                               </div>
                             )}
                            <div className="flex justify-between items-center mb-4">
-                             <h3 className="text-sm font-bold uppercase tracking-widest flex items-center gap-2" style={{color: "#9e9590"}}>
+                             <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                <Hash size={14} /> {activeTab === 'learn' ? 'Core Vocabulary' : 'Dictionary Search Results'} ({filteredWords.length})
                              </h3>
                            </div>
 
                            {filteredWords.length === 0 ? (
-                             <div className="rounded-xl p-12 text-center" style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3"}}>
-                               <p className="text-lg mb-2" style={{color: "#9e9590"}}>沒有找到符合條件的單字</p>
-                               <p className="text-xs" style={{color: "#9e9590"}}>請嘗試切換篩選狀態或更改搜尋關鍵字</p>
+                             <div className="bg-white rounded-xl p-12 text-center border border-slate-200">
+                               <p className="text-slate-400 text-lg mb-2">沒有找到符合條件的單字</p>
+                               <p className="text-xs text-slate-400">請嘗試切換篩選狀態或更改搜尋關鍵字</p>
                              </div>
                            ) : (
                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-12">
@@ -827,17 +810,17 @@
                                   <div 
                                     key={idx}
                                     onClick={() => speak(word.tp)}
-                                    className={`group bg-white rounded-xl border p-5 hover:shadow-sm transition-all text-left relative overflow-hidden cursor-pointer flex flex-col justify-between
-                                      ${isMastered ? 'border-[#7a9b80] bg-[#f0f5f1]/50' : 'border-[#e0dbd3] hover:border-[#8a9ba8]'}
+                                    className={`group bg-white rounded-xl border p-5 hover:shadow-lg transition-all text-left relative overflow-hidden cursor-pointer flex flex-col justify-between
+                                      ${isMastered ? 'border-emerald-300 bg-emerald-50/20' : 'border-slate-200 hover:border-indigo-400'}
                                     `}
                                   >
                                     <div>
                                       <div className="flex justify-between items-start mb-2">
                                         <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded
-                                          ${word.type === '動/名' ? 'bg-[#f5ede0] text-[#b09070]' : 
-                                            word.type === '助詞' || word.type === '介係' || word.type === '文法' ? 'bg-[#e6edf1] text-[#8a9ba8]' :
-                                            word.type === '修飾' ? 'bg-[#f0e8e9] text-[#b08088]' :
-                                            'bg-[#ece8e2] text-[#9e9590]'}
+                                          ${word.type === '動/名' ? 'bg-orange-100 text-orange-600' : 
+                                            word.type === '助詞' || word.type === '介係' || word.type === '文法' ? 'bg-indigo-100 text-indigo-600' :
+                                            word.type === '修飾' ? 'bg-pink-100 text-pink-600' :
+                                            'bg-slate-100 text-slate-500'}
                                         `}>
                                           {word.type}
                                         </span>
@@ -856,8 +839,8 @@
                                             title="新增或編輯個人筆記"
                                             className={`p-1.5 rounded-full transition-all ${
                                               notes[word.key] 
-                                                ? 'bg-[#f0e8de] text-[#b09070] hover:bg-[#e8d8c8] shadow-sm' 
-                                                : 'bg-[#ece8e2] text-[#9e9590] hover:bg-[#f0e8de] hover:text-[#b09070]'
+                                                ? 'bg-amber-100 text-amber-700 hover:bg-amber-200 shadow-sm' 
+                                                : 'bg-slate-100 text-slate-400 hover:bg-amber-50 hover:text-amber-600'
                                             }`}
                                           >
                                             <FileText size={13} />
@@ -867,16 +850,16 @@
                                           <button
                                             onClick={(e) => toggleMastered(word.key, e)}
                                             title={isMastered ? '標記為未學會' : '標記為已學會'}
-                                            className={`p-1.5 rounded-full transition-all ${isMastered ? 'bg-[#7a9b80] text-white shadow-sm' : 'bg-[#ece8e2] text-[#9e9590] hover:bg-[#f0f5f1] hover:text-[#7a9b80]'}`}
+                                            className={`p-1.5 rounded-full transition-all ${isMastered ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-400 hover:bg-emerald-100 hover:text-emerald-600'}`}
                                           >
                                             <Check size={14} />
                                           </button>
-                                          <Volume2 size={16} className="transition-colors" style={{color: "#d1ccc4"}} onMouseOver={(e)=>e.currentTarget.style.color="#8a9ba8"} onMouseOut={(e)=>e.currentTarget.style.color="#d1ccc4"} />
+                                          <Volume2 size={16} className="text-slate-300 group-hover:text-indigo-500 transition-colors" />
                                         </div>
                                       </div>
                                       
                                       <div className="flex items-baseline gap-2.5 mb-1">
-                                        <h3 className="text-2xl font-bold font-serif transition-colors" style={{color: "#2c2825"}}>
+                                        <h3 className="text-2xl font-bold text-slate-800 font-serif group-hover:text-indigo-700 transition-colors">
                                           {word.tp}
                                         </h3>
                                         {showSitelen && (
@@ -885,11 +868,11 @@
                                           </span>
                                         )}
                                       </div>
-                                      <p className="text-sm font-medium leading-relaxed" style={{color: "#2c2825"}}>
+                                      <p className="text-slate-700 text-sm font-medium leading-relaxed">
                                         {getMeaning(word)}
                                       </p>
                                       {lang !== 'zh' && (
-                                        <p className="text-xs mt-0.5" style={{color: "#9e9590"}}>
+                                        <p className="text-slate-400 text-xs mt-0.5">
                                           {word.cn}
                                         </p>
                                       )}
@@ -902,10 +885,10 @@
                                             setEditingNoteKey(word.key);
                                             setNoteInputText(notes[word.key] || '');
                                           }}
-                                          className="mt-2.5 p-2 rounded-lg text-xs flex items-start gap-1.5 hover:opacity-90 transition-opacity cursor-pointer" style={{backgroundColor: "#faf5ee", border: "1px solid #e0c9a8", color: "#6b5040"}}
+                                          className="mt-2.5 p-2 bg-amber-50/90 border border-amber-200/80 rounded-lg text-xs text-amber-900 flex items-start gap-1.5 hover:bg-amber-100 transition-colors"
                                           title="點擊編輯個人筆記"
                                         >
-                                          <span className="font-bold select-none text-[11px] leading-tight" style={{color: "#b09070"}}>📝</span>
+                                          <span className="text-amber-600 font-bold select-none text-[11px] leading-tight">📝</span>
                                           <span className="line-clamp-2 leading-tight flex-1 text-[11px]">{notes[word.key]}</span>
                                         </div>
                                       )}
@@ -914,13 +897,13 @@
                                       {editingNoteKey === word.key && (
                                         <div 
                                           onClick={(e) => e.stopPropagation()} 
-                                          className="mt-3 p-2.5 rounded-xl shadow-sm space-y-2" style={{backgroundColor: "#faf5ee", border: "1px solid #e0c9a8"}}
+                                          className="mt-3 p-2.5 bg-amber-50 rounded-xl border border-amber-300 shadow-sm space-y-2"
                                         >
-                                          <div className="flex items-center justify-between text-[11px] font-bold" style={{color: "#6b5040"}}>
+                                          <div className="flex items-center justify-between text-[11px] font-bold text-amber-800">
                                             <span>自訂筆記 / 記憶口訣</span>
                                             <button 
                                               onClick={() => setEditingNoteKey(null)}
-                                              className="hover:opacity-80 transition-opacity" style={{color: "#b09070"}}
+                                              className="text-amber-600 hover:text-amber-800"
                                             >
                                               <X size={13} />
                                             </button>
@@ -929,7 +912,7 @@
                                             value={noteInputText}
                                             onChange={(e) => setNoteInputText(e.target.value)}
                                             placeholder="寫下您的記憶口訣或筆記..."
-                                            className="w-full text-xs p-2 rounded-lg border focus:outline-none focus:ring-1 bg-white resize-none" style={{borderColor: "#e0c9a8", color: "#2c2825"}} onFocus={(e)=>e.target.style.boxShadow="0 0 0 2px #b0907060"} onBlur={(e)=>e.target.style.boxShadow=""}
+                                            className="w-full text-xs p-2 rounded-lg border border-amber-200 focus:outline-none focus:ring-1 focus:ring-amber-500 bg-white resize-none text-slate-800"
                                             rows="2"
                                             autoFocus
                                           />
@@ -937,14 +920,14 @@
                                             {notes[word.key] && (
                                               <button
                                                 onClick={() => saveNote(word.key, '')}
-                                                className="px-2 py-1 rounded text-[11px] font-medium transition-colors hover:opacity-90" style={{color: "#b08088"}}
+                                                className="px-2 py-1 rounded text-[11px] text-rose-600 hover:bg-rose-100 font-medium transition-colors"
                                               >
                                                 刪除
                                               </button>
                                             )}
                                             <button
                                               onClick={() => saveNote(word.key, noteInputText)}
-                                              className="px-3 py-1 rounded text-white font-bold text-[11px] shadow-sm transition-colors" style={{backgroundColor: "#b09070"}}
+                                              className="px-3 py-1 rounded bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] shadow-sm transition-colors"
                                             >
                                               儲存
                                             </button>
@@ -954,7 +937,7 @@
                                     </div>
 
                                     {activeTab === 'all' && word.categoryTitle && (
-                                      <div className="mt-4 pt-2 text-[10px] truncate" style={{borderTop: "1px solid #e0dbd3", color: "#9e9590"}}>
+                                      <div className="mt-4 pt-2 border-t border-slate-100 text-[10px] text-slate-400 truncate">
                                         單元: {word.categoryTitle.split('(')[0]}
                                       </div>
                                     )}
@@ -967,58 +950,60 @@
 
                         {/* Daily Dialogues Section (When Category has Dialogues) */}
                         {activeTab === 'learn' && selectedCategory.dialogues && selectedCategory.dialogues.length > 0 && (
-                          <div className="rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden mb-8" style={{backgroundColor: "#f5f3ef", border: "1px solid #e0dbd3", color: "#2c2825"}}>
-                            <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none opacity-0"></div>
+                          <div className="bg-slate-900 rounded-2xl p-6 md:p-8 text-slate-300 shadow-2xl relative overflow-hidden mb-8">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-teal-600 rounded-full filter blur-[100px] opacity-20 pointer-events-none"></div>
                             
-                            <div className="flex items-center gap-3 mb-6 relative z-10 pb-4" style={{borderBottom: "1px solid #e0dbd3"}}>
-                              <div className="p-2 rounded-lg" style={{backgroundColor: "#e6edf1"}}>
-                                <MessageSquare size={24} style={{color: "#8a9ba8"}} />
+                            <div className="flex items-center gap-3 mb-6 relative z-10">
+                              <div className="p-2 bg-teal-500/20 rounded-lg">
+                                <MessageSquare className="text-teal-400" size={24} />
                               </div>
                               <div>
-                                <h3 className="text-xl font-bold" style={{color: "#2c2825"}}>日常實用情境對話</h3>
-                                <p className="text-xs" style={{color: "#6b6460"}}>點擊小喇叭聆聽發音，沉浸式練習實用交際會話</p>
+                                <h3 className="text-xl font-bold text-white">日常實用情境對話</h3>
+                                <p className="text-slate-400 text-xs">點擊小喇叭聆聽發音，沉浸式練習實用交際會話</p>
                               </div>
                             </div>
 
                             <div className="space-y-6 relative z-10">
                               {selectedCategory.dialogues.map((diag, dIdx) => (
-                                <div key={dIdx} className="rounded-xl p-5" style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3"}}>
-                                  <h4 className="text-md font-semibold mb-4 pb-2 flex items-center gap-2" style={{color: "#8a9ba8", borderBottom: "1px solid #e0dbd3"}}>
-                                    <span className="w-2 h-2 rounded-full" style={{backgroundColor: "#8a9ba8"}}></span>
+                                <div key={dIdx} className="bg-slate-800/60 rounded-xl p-5 border border-slate-700">
+                                  <h4 className="text-md font-semibold text-teal-300 mb-4 pb-2 border-b border-slate-700/60 flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-teal-400"></span>
                                     {diag.sceneTitle}
                                   </h4>
                                   <div className="space-y-3">
                                     {diag.rounds.map((round, rIdx) => (
                                       <div 
                                         key={rIdx} 
-                                        className="flex items-start gap-3 p-3.5 rounded-xl transition-all"
-                                        style={{backgroundColor: round.speaker === 'A' ? '#faf9f7' : '#f0ede8', border: '1px solid #e0dbd3'}}
+                                        className={`flex items-start gap-3 p-3.5 rounded-xl transition-all ${
+                                          round.speaker === 'A' 
+                                            ? 'bg-slate-900/80 border border-slate-700/60' 
+                                            : 'bg-teal-950/40 border border-teal-800/40'
+                                        }`}
                                       >
-                                        <span className="px-2 py-0.5 rounded text-xs font-bold mt-0.5 flex-shrink-0 text-white"
-                                          style={{backgroundColor: round.speaker === 'A' ? '#8a9ba8' : '#7a9b80'}}
-                                        >
+                                        <span className={`px-2 py-0.5 rounded text-xs font-bold mt-0.5 flex-shrink-0 ${
+                                          round.speaker === 'A' ? 'bg-indigo-600 text-white' : 'bg-teal-600 text-white'
+                                        }`}>
                                           {round.speaker}
                                         </span>
                                         <div className="flex-1">
                                           <div className="flex items-center justify-between">
                                             <div>
                                               {showSitelen && (
-                                                <p className="sitelen-pona text-2xl mb-1 leading-snug tracking-wider select-none" style={{color: '#8a9ba8'}}>
+                                                <p className="sitelen-pona text-2xl text-teal-300 mb-1 leading-snug tracking-wider select-none">
                                                   {round.tp.toLowerCase().replace(/[^a-z ]/g, '')}
                                                 </p>
                                               )}
-                                              <p className="font-medium font-serif text-base leading-snug" style={{color: '#2c2825'}}>{round.tp}</p>
+                                              <p className="text-slate-100 font-medium font-serif text-base leading-snug">{round.tp}</p>
                                             </div>
                                             <button 
                                               onClick={() => speak(round.tp)}
-                                              className="p-1.5 rounded-lg transition-all ml-2 flex-shrink-0 hover:bg-[#ece8e2]"
-                                              style={{color: '#9e9590'}}
+                                              className="p-1.5 text-slate-400 hover:text-teal-300 hover:bg-slate-800 rounded-lg transition-all ml-2 flex-shrink-0"
                                               title="點擊發音"
                                             >
                                               <Volume2 size={16} />
                                             </button>
                                           </div>
-                                          <p className="text-xs mt-1 leading-relaxed" style={{color: '#6b6460'}}>{round.cn}</p>
+                                          <p className="text-slate-400 text-xs mt-1 leading-relaxed">{round.cn}</p>
                                         </div>
                                       </div>
                                     ))}
@@ -1031,18 +1016,18 @@
 
                         {/* Context Sentences Section (Only in Learn Mode) */}
                         {activeTab === 'learn' && selectedCategory.sentences && selectedCategory.sentences.length > 0 && (
-                          <div className="rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden" style={{backgroundColor: "#f5f3ef", border: "1px solid #e0dbd3", color: "#2c2825"}}>
-                            <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none opacity-0"></div>
+                          <div className="bg-slate-900 rounded-2xl p-6 md:p-8 text-slate-300 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600 rounded-full filter blur-[100px] opacity-20 pointer-events-none"></div>
                             
                             <div className="flex items-center gap-3 mb-8 relative z-10">
-                              <div className="p-2 rounded-lg" style={{backgroundColor: "#e6edf1"}}>
-                                <MessageSquare size={24} style={{color: "#8a9ba8"}} />
+                              <div className="p-2 bg-indigo-500/20 rounded-lg">
+                                <MessageSquare className="text-indigo-400" size={24} />
                               </div>
                               <div>
                                 <h3 className="text-xl font-bold text-white">
                                   {selectedCategory.id === 'stories' ? '閱讀練習' : '實用例句練習'}
                                 </h3>
-                                <p className="text-xs" style={{color: "#6b6460"}}>點擊文字以聆聽發音</p>
+                                <p className="text-slate-400 text-xs">點擊文字以聆聽發音</p>
                               </div>
                             </div>
                             
@@ -1051,11 +1036,11 @@
                                 <button 
                                   key={i} 
                                   onClick={() => speak(sent.tp)}
-                                  className="group flex flex-col items-start gap-2 p-5 rounded-xl transition-all text-left hover:shadow-sm" style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3"}}
+                                  className="group flex flex-col items-start gap-2 p-5 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-indigo-500/50 transition-all text-left"
                                 >
                                   <div className="flex items-start justify-between w-full">
                                      <div className="flex gap-3 w-full">
-                                        <span className="font-mono text-sm opacity-50 mt-1 flex-shrink-0" style={{color: "#8a9ba8"}}>
+                                        <span className="text-indigo-500 font-mono text-sm opacity-50 mt-1 flex-shrink-0">
                                           {selectedCategory.id === 'stories' ? <FileText size={16} /> : `0${i + 1}`}
                                         </span>
                                         <div className="w-full">
@@ -1064,16 +1049,16 @@
                                               {sent.tp.toLowerCase().replace(/[^a-z ]/g, '')}
                                             </p>
                                           )}
-                                          <p className="text-lg font-medium transition-colors font-serif leading-relaxed w-full" style={{color: "#2c2825"}}>
+                                          <p className="text-lg font-medium text-slate-100 group-hover:text-indigo-300 transition-colors font-serif leading-relaxed w-full">
                                             {sent.tp}
                                           </p>
                                         </div>
                                      </div>
-                                     <Volume2 size={16} className="opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0 mt-1 ml-2" style={{color: "#8a9ba8"}} />
+                                     <Volume2 size={16} className="opacity-0 group-hover:opacity-50 text-indigo-400 transition-opacity flex-shrink-0 mt-1 ml-2" />
                                   </div>
                                   
-                                  <div className="pl-8 transition-colors ml-1 mt-2" style={{borderLeft: "2px solid #e0dbd3"}}>
-                                    <p className="text-sm leading-relaxed" style={{color: "#6b6460"}}>
+                                  <div className="pl-8 border-l-2 border-slate-700 group-hover:border-indigo-500/30 transition-colors ml-1 mt-2">
+                                    <p className="text-slate-400 text-sm leading-relaxed">
                                       {sent.cn}
                                     </p>
                                   </div>
@@ -1092,12 +1077,12 @@
                         
                         {/* Quiz Start Screen */}
                         {quizState === 'start' && (
-                          <div className="rounded-2xl shadow-sm p-8" style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3"}}>
-                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner" style={{backgroundColor: "#e6edf1", color: "#8a9ba8"}}>
+                          <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
+                            <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner">
                               <Trophy size={32} />
                             </div>
-                            <h3 className="text-2xl font-bold mb-2 text-center" style={{color: "#2c2825"}}>Toki Pona 隨堂測驗</h3>
-                            <p className="mb-6 text-center max-w-md mx-auto" style={{color: "#6b6460"}}>
+                            <h3 className="text-2xl font-bold text-slate-800 mb-2 text-center">Toki Pona 隨堂測驗</h3>
+                            <p className="text-slate-600 mb-6 text-center max-w-md mx-auto">
                               透過多元題型挑戰您的道本語實力！請選擇測驗類型與範圍：
                             </p>
 
@@ -1118,18 +1103,18 @@
                                     onClick={() => setSelectedQuizType(m.id)}
                                     className={`p-4 rounded-xl border-2 text-left transition-all flex flex-col justify-between ${
                                       isSelected 
-                                        ? 'shadow-sm text-[#2c2825] border-[#8a9ba8] bg-[#e6edf1]' 
-                                        : 'text-[#6b6460] hover:text-[#2c2825] hover:shadow-sm border-[#e0dbd3] bg-[#faf9f7]'
+                                        ? 'border-purple-600 bg-purple-50 text-purple-900 shadow-sm' 
+                                        : 'border-slate-200 hover:border-slate-300 bg-slate-50 text-slate-700'
                                     }`}
                                   >
                                     <div>
                                       <div className="flex items-center justify-between mb-2">
-                                        <IconComp size={20} className={isSelected ? 'text-[#8a9ba8]' : 'text-[#9e9590]'} />
+                                        <IconComp size={20} className={isSelected ? 'text-purple-600' : 'text-slate-500'} />
                                         {isSelected && <Check size={16} className="text-purple-600 font-bold" />}
                                       </div>
                                       <div className="font-bold text-sm mb-1">{m.label}</div>
                                     </div>
-                                    <div className="text-[11px]" style={{color: "#9e9590"}}>{m.desc}</div>
+                                    <div className="text-[11px] text-slate-500">{m.desc}</div>
                                   </button>
                                 );
                               })}
@@ -1138,7 +1123,7 @@
                             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
                               <button
                                 onClick={() => startQuiz(allWordsWithKey, selectedQuizType)}
-                                className="px-6 py-3.5 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 hover:opacity-90" style={{backgroundColor: "#8a9ba8"}}
+                                className="px-6 py-3.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
                               >
                                 <Zap size={20} />
                                 開始測驗 (10題)
@@ -1150,7 +1135,7 @@
                                     const masteredList = allWordsWithKey.filter(w => masteredWords[w.key]);
                                     startQuiz(masteredList, selectedQuizType);
                                   }}
-                                  className="px-6 py-3.5 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 hover:opacity-90" style={{backgroundColor: "#7a9b80"}}
+                                  className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
                                 >
                                   <Star size={20} />
                                   測驗已學會單字 ({masteredCount}題)
@@ -1172,11 +1157,11 @@
 
                             {/* 錯題本總覽清單 */}
                             {mistakesList.length > 0 && (
-                              <div className="mt-8 pt-6 text-left" style={{borderTop: "1px solid #e0dbd3"}}>
+                              <div className="mt-8 pt-6 border-t border-slate-200 text-left">
                                 <div className="flex items-center justify-between mb-4">
                                   <div className="flex items-center gap-2">
                                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
-                                    <h4 className="font-bold text-sm" style={{color: "#2c2825"}}>錯題本紀錄清單 ({mistakesList.length})</h4>
+                                    <h4 className="font-bold text-slate-800 text-sm">錯題本紀錄清單 ({mistakesList.length})</h4>
                                   </div>
                                   <button
                                     onClick={clearAllMistakes}
@@ -1187,10 +1172,10 @@
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
                                   {mistakesList.map((mItem, idx) => (
-                                    <div key={idx} className="flex items-center justify-between p-2.5 rounded-lg text-xs" style={{backgroundColor: "#f5f3ef", border: "1px solid #e0dbd3"}}>
+                                    <div key={idx} className="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs">
                                       <div>
-                                        <span className="font-bold font-serif mr-2" style={{color: "#2c2825"}}>{mItem.tp}</span>
-                                        <span className="" style={{color: "#6b6460"}}>{mItem.cn}</span>
+                                        <span className="font-bold text-slate-900 font-serif mr-2">{mItem.tp}</span>
+                                        <span className="text-slate-500">{mItem.cn}</span>
                                         {mItem.count > 1 && (
                                           <span className="ml-1 px-1.5 py-0.2 bg-rose-100 text-rose-700 rounded-full font-mono text-[10px]">
                                             錯 {mItem.count} 次
@@ -1199,7 +1184,7 @@
                                       </div>
                                       <button
                                         onClick={(e) => removeMistake(mItem.key || mItem.tp, e)}
-                                        className="p-1 hover:opacity-80 transition-opacity" style={{color: "#b08088"}}
+                                        className="text-slate-400 hover:text-rose-500 p-1"
                                         title="移出錯題本"
                                       >
                                         <X size={14} />
@@ -1218,24 +1203,24 @@
                           const progressPercent = Math.round(((currentQuizIndex) / quizQuestions.length) * 100);
 
                           return (
-                            <div className="rounded-2xl shadow-sm p-6 md:p-8" style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3"}}>
+                            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-slate-200">
                               {/* Header & Progress */}
                               <div className="flex justify-between items-center mb-6">
-                                <span className="text-xs font-bold font-mono px-3 py-1 rounded-full" style={{backgroundColor: "#e6edf1", color: "#8a9ba8", border: "1px solid #e0dbd3"}}>
+                                <span className="text-xs font-bold font-mono px-3 py-1 bg-purple-50 text-purple-600 rounded-full border border-purple-100">
                                   題目 {currentQuizIndex + 1} / {quizQuestions.length}
                                 </span>
-                                <span className="text-xs font-bold" style={{color: "#9e9590"}}>
+                                <span className="text-xs font-bold text-slate-400">
                                   得分: {quizScore}
                                 </span>
                               </div>
 
-                              <div className="w-full h-2 rounded-full mb-8 overflow-hidden" style={{backgroundColor: "#e0dbd3"}}>
-                                <div className="h-full transition-all duration-300" style={{backgroundColor: "#8a9ba8"}} style={{ width: `${progressPercent}%` }}></div>
+                              <div className="w-full bg-slate-100 h-2 rounded-full mb-8 overflow-hidden">
+                                <div className="bg-purple-600 h-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
                               </div>
 
                               {/* Question Card */}
                               <div className="text-center mb-8">
-                                <span className="text-xs font-bold uppercase tracking-widest block mb-2" style={{color: "#9e9590"}}>
+                                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">
                                   {currentQ.type === 'tp_to_cn' && '請選擇正確的釋義意思：'}
                                   {currentQ.type === 'cn_to_tp' && '請選擇正確的 Toki Pona 單字：'}
                                   {currentQ.type === 'listening' && '請聆聽發音，選出對應的 Toki Pona 單字：'}
@@ -1249,7 +1234,7 @@
                                   <div className="py-6">
                                     <button
                                       onClick={() => speak(currentQ.item.tp)}
-                                      className="w-24 h-24 text-white rounded-full flex items-center justify-center mx-auto shadow-sm transition-all hover:scale-105 active:scale-95 group hover:opacity-90" style={{backgroundColor: "#8a9ba8"}}
+                                      className="w-24 h-24 bg-purple-600 hover:bg-purple-700 text-white rounded-full flex items-center justify-center mx-auto shadow-xl transition-all hover:scale-105 active:scale-95 group"
                                       title="點擊播放語音"
                                     >
                                       <Volume2 size={40} className="group-hover:animate-pulse" />
@@ -1258,10 +1243,10 @@
                                   </div>
                                 ) : currentQ.type === 'cloze' ? (
                                   <div className="mb-4">
-                                    <h3 className="text-2xl md:text-3xl font-bold font-serif mb-2 tracking-wide" style={{color: "#2c2825"}}>
+                                    <h3 className="text-2xl md:text-3xl font-bold text-slate-800 font-serif mb-2 tracking-wide text-purple-700">
                                       {currentQ.questionText}
                                     </h3>
-                                    <p className="text-sm py-1.5 px-4 rounded-full inline-block" style={{color: "#9e9590", backgroundColor: "#ece8e2"}}>
+                                    <p className="text-sm text-slate-500 bg-slate-100 py-1.5 px-4 rounded-full inline-block">
                                       釋義：{currentQ.sentenceCn}
                                     </p>
                                   </div>
@@ -1270,17 +1255,17 @@
                                     <div className="sitelen-pona text-7xl text-amber-500 mb-2 leading-none select-none drop-shadow-sm">
                                       {currentQ.questionText}
                                     </div>
-                                    <span className="text-xs" style={{color: "#9e9590"}}>這是哪一個單字的象形符號？</span>
+                                    <span className="text-xs text-slate-400">這是哪一個單字的象形符號？</span>
                                   </div>
                                 ) : (
                                   <div>
-                                    <h3 className="text-3xl md:text-4xl font-bold font-serif mb-3" style={{color: "#2c2825"}}>
+                                    <h3 className="text-3xl md:text-4xl font-bold text-slate-800 font-serif mb-3">
                                       {currentQ.questionText}
                                     </h3>
                                     {currentQ.type === 'tp_to_cn' && (
                                       <button 
                                         onClick={() => speak(currentQ.questionText)}
-                                        className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full transition-colors font-medium hover:opacity-80" style={{color: "#8a9ba8", backgroundColor: "#e6edf1"}}
+                                        className="inline-flex items-center gap-1.5 text-xs text-purple-600 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded-full transition-colors font-medium"
                                       >
                                         <Volume2 size={14} /> 聽取發音
                                       </button>
@@ -1292,14 +1277,14 @@
                               {/* Options Grid */}
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                                 {currentQ.options.map((option, idx) => {
-                                  let btnStyle = "hover:shadow-sm transition-shadow border text-[#2c2825]"; let btnStyleObj = {backgroundColor: "#faf9f7", borderColor: "#e0dbd3"};
+                                  let btnStyle = "bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100 hover:border-slate-300";
                                   if (isAnswered) {
                                     if (option === currentQ.correctAnswer) {
-                                      btnStyle = "text-white shadow-sm border-transparent"; btnStyleObj = {backgroundColor: "#7a9b80"};
+                                      btnStyle = "bg-emerald-500 text-white border-emerald-600 shadow-md";
                                     } else if (option === selectedOption) {
-                                      btnStyle = "text-white border-transparent shadow-sm"; btnStyleObj = {backgroundColor: "#b08088"};
+                                      btnStyle = "bg-rose-500 text-white border-rose-600 shadow-md";
                                     } else {
-                                      btnStyle = "text-[#9e9590] opacity-50 border"; btnStyleObj = {backgroundColor: "#faf9f7", borderColor: "#e0dbd3"};
+                                      btnStyle = "bg-slate-50 text-slate-400 border-slate-200 opacity-60";
                                     }
                                   }
 
@@ -1311,10 +1296,9 @@
                                       onClick={() => handleAnswerSelect(option)}
                                       disabled={isAnswered}
                                       className={`p-4 rounded-xl border-2 font-medium text-lg transition-all text-center flex items-center justify-center min-h-[64px] ${btnStyle}`}
-                                      style={btnStyleObj}
                                     >
                                       {isSitelenOption ? (
-                                        <span className="sitelen-pona text-4xl leading-none select-none" style={{color: "#b09070"}}>
+                                        <span className="sitelen-pona text-4xl text-amber-500 leading-none select-none">
                                           {option}
                                         </span>
                                       ) : (
@@ -1327,7 +1311,7 @@
 
                               {/* Feedback & Next Button */}
                               {isAnswered && (
-                                <div className="p-6 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4 animate-fadeIn" style={{backgroundColor: "#f5f3ef", border: "1px solid #e0dbd3"}}>
+                                <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 animate-fadeIn">
                                   <div>
                                     <div className="flex items-center gap-2 mb-1">
                                       {selectedOption === currentQ.correctAnswer ? (
@@ -1345,15 +1329,15 @@
                                         </span>
                                       )}
                                     </div>
-                                    <p className="text-xs" style={{color: "#6b6460"}}>
+                                    <p className="text-xs text-slate-500">
                                       {currentQ.type === 'cloze' ? (
-                                        <span>完整例句: <strong className="font-serif" style={{color: "#2c2825"}}>{currentQ.originalTp}</strong> ({currentQ.sentenceCn})</span>
+                                        <span>完整例句: <strong className="text-slate-700 font-serif">{currentQ.originalTp}</strong> ({currentQ.sentenceCn})</span>
                                       ) : (
                                         <span className="flex items-center gap-1.5 flex-wrap">
                                           <span className="sitelen-pona text-xl text-amber-500 leading-none select-none">
                                             {currentQ.item.tp.replace(/\s*\(.*?\)/, '').toLowerCase()}
                                           </span>
-                                          <span>單字: <strong className="" style={{color: "#2c2825"}}>{currentQ.item.tp}</strong> = {getMeaning(currentQ.item)} ({currentQ.item.type})</span>
+                                          <span>單字: <strong className="text-slate-700">{currentQ.item.tp}</strong> = {getMeaning(currentQ.item)} ({currentQ.item.type})</span>
                                         </span>
                                       )}
                                     </p>
@@ -1361,7 +1345,7 @@
 
                                   <button
                                     onClick={handleNextQuestion}
-                                    className="px-6 py-2.5 text-white font-bold rounded-xl shadow-sm transition-all whitespace-nowrap hover:opacity-90" style={{backgroundColor: "#2c2825"}}
+                                    className="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow transition-all whitespace-nowrap"
                                   >
                                     {currentQuizIndex + 1 < quizQuestions.length ? '下一題' : '查看結算'}
                                   </button>
@@ -1373,19 +1357,19 @@
 
                         {/* Quiz Result Screen */}
                         {quizState === 'result' && (
-                          <div className="rounded-2xl shadow-sm p-8 text-center animate-fadeIn" style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3"}}>
-                            <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner text-3xl" style={{backgroundColor: "#f0e8de", color: "#b09070"}}>
+                          <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200 text-center animate-fadeIn">
+                            <div className="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner text-3xl">
                               🎉
                             </div>
-                            <h3 className="text-3xl font-bold mb-2" style={{color: "#2c2825"}}>測驗結算報告</h3>
-                            <p className="mb-6" style={{color: "#6b6460"}}>您已完成本輪 Toki Pona 隨堂測驗！</p>
+                            <h3 className="text-3xl font-bold text-slate-800 mb-2">測驗結算報告</h3>
+                            <p className="text-slate-600 mb-6">您已完成本輪 Toki Pona 隨堂測驗！</p>
 
-                            <div className="rounded-2xl p-6 max-w-sm mx-auto mb-8" style={{backgroundColor: "#f5f3ef", border: "1px solid #e0dbd3"}}>
-                              <div className="text-sm mb-1" style={{color: "#6b6460"}}>最終得分</div>
-                              <div className="text-4xl font-extrabold font-mono mb-2" style={{color: "#8a9ba8"}}>
+                            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 max-w-sm mx-auto mb-8">
+                              <div className="text-sm text-slate-500 mb-1">最終得分</div>
+                              <div className="text-4xl font-extrabold text-purple-600 font-mono mb-2">
                                 {quizScore} / {quizQuestions.length}
                               </div>
-                              <div className="text-xs" style={{color: "#9e9590"}}>
+                              <div className="text-xs text-slate-400">
                                 正確率: {Math.round((quizScore / quizQuestions.length) * 100)}%
                               </div>
                             </div>
@@ -1393,7 +1377,7 @@
                             <div className="flex flex-col sm:flex-row justify-center gap-4">
                               <button
                                 onClick={() => startQuiz(allWordsWithKey)}
-                                className="px-6 py-3 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 hover:opacity-90" style={{backgroundColor: "#8a9ba8"}}
+                                className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
                               >
                                 <ArrowClockwise size={20} />
                                 再測一次
@@ -1414,15 +1398,15 @@
 
                               <button
                                 onClick={() => setActiveTab('learn')}
-                                className="px-6 py-3 font-bold rounded-xl transition-all hover:opacity-80" style={{backgroundColor: "#ece8e2", color: "#2c2825"}}
+                                className="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition-all"
                               >
                                 返回學習首頁
                               </button>
                             </div>
 
                             {wrongQuestions.length > 0 && (
-                              <div className="mt-8 pt-6 text-left" style={{borderTop: "1px solid #e0dbd3"}}>
-                                <h4 className="font-bold text-sm mb-3" style={{color: "#2c2825"}}>本次錯題檢討：</h4>
+                              <div className="mt-8 pt-6 border-t border-slate-200 text-left">
+                                <h4 className="font-bold text-slate-800 text-sm mb-3">本次錯題檢討：</h4>
                                 <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
                                   {wrongQuestions.map((wq, wIdx) => {
                                     const tpWord = wq.item?.tp || wq.correctAnswer;
@@ -1432,8 +1416,8 @@
                                         <div className="flex items-center gap-2.5">
                                           <span className="sitelen-pona text-2xl text-amber-600 leading-none select-none">{pureTp}</span>
                                           <div>
-                                            <span className="font-bold font-serif mr-1.5" style={{color: "#2c2825"}}>{tpWord}</span>
-                                            <span className="" style={{color: "#6b6460"}}>{getMeaning(wq.item)}</span>
+                                            <span className="font-bold text-slate-900 font-serif mr-1.5">{tpWord}</span>
+                                            <span className="text-slate-600">{getMeaning(wq.item)}</span>
                                           </div>
                                         </div>
                                         <span className="text-rose-600 font-semibold font-mono">
