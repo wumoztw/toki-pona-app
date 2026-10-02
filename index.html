@@ -21,6 +21,14 @@
     <!-- 5. 引入 抽離的 VOCAB_DATA 資料 -->
     <script src="./data.js"></script>
 
+    <!-- PWA Manifest & Meta -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TokiPona">
+    <link rel="apple-touch-icon" href="./icon.svg">
+
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
@@ -196,39 +204,91 @@
           const [isAnswered, setIsAnswered] = useState(false);
           const [quizScore, setQuizScore] = useState(0);
           const [wrongQuestions, setWrongQuestions] = useState([]);
-          const [quizModeType, setQuizModeType] = useState('tp_to_cn'); // 'tp_to_cn' | 'cn_to_tp'
+          const [selectedQuizType, setSelectedQuizType] = useState('mixed'); // 'mixed' | 'vocab' | 'listening' | 'cloze'
 
           // 開始新測驗
-          const startQuiz = (sourceList = allWordsWithKey) => {
-            if (!sourceList || sourceList.length < 4) {
-              alert('單字數量不足，無法開始測驗！');
-              return;
+          const startQuiz = (sourceList = allWordsWithKey, mode = selectedQuizType) => {
+            let questions = [];
+
+            if (mode === 'cloze') {
+              const allSentences = [];
+              window.VOCAB_DATA.forEach(cat => {
+                if (cat.sentences) {
+                  cat.sentences.forEach(s => {
+                    allSentences.push({ ...s, categoryTitle: cat.title });
+                  });
+                }
+              });
+
+              if (allSentences.length < 4) {
+                alert('例句數量不足，無法開始克漏字測驗！');
+                return;
+              }
+
+              const shuffledSents = [...allSentences].sort(() => 0.5 - Math.random());
+              const chosenSents = shuffledSents.slice(0, Math.min(10, shuffledSents.length));
+
+              questions = chosenSents.map(sent => {
+                const rawTokens = sent.tp.replace(/[.,?!]/g, '').split(' ');
+                const vocabTpSet = new Set(allWordsWithKey.map(w => w.tp.toLowerCase()));
+                const candidateTokens = rawTokens.filter(t => vocabTpSet.has(t.toLowerCase()));
+                const targetToken = candidateTokens.length > 0 
+                  ? candidateTokens[Math.floor(Math.random() * candidateTokens.length)]
+                  : rawTokens[0];
+
+                const maskedTp = sent.tp.replace(new RegExp(`\\b${targetToken}\\b`, 'i'), '_____');
+
+                const otherWords = allWordsWithKey.filter(w => w.tp.toLowerCase() !== targetToken.toLowerCase());
+                const shuffledOthers = [...otherWords].sort(() => 0.5 - Math.random());
+                const wrongOptions = shuffledOthers.slice(0, 3).map(w => w.tp);
+                const options = [targetToken, ...wrongOptions].sort(() => 0.5 - Math.random());
+
+                return {
+                  type: 'cloze',
+                  questionText: maskedTp,
+                  correctAnswer: targetToken,
+                  options,
+                  sentenceCn: sent.cn,
+                  originalTp: sent.tp,
+                  item: { tp: targetToken, cn: sent.cn, type: '例句克漏字' }
+                };
+              });
+            } else {
+              if (!sourceList || sourceList.length < 4) {
+                alert('單字數量不足，無法開始測驗！');
+                return;
+              }
+              const shuffled = [...sourceList].sort(() => 0.5 - Math.random());
+              const selectedCount = Math.min(10, shuffled.length);
+              const chosen = shuffled.slice(0, selectedCount);
+
+              questions = chosen.map(item => {
+                let qType = mode;
+                if (mode === 'mixed') {
+                  const types = ['tp_to_cn', 'cn_to_tp', 'listening'];
+                  qType = types[Math.floor(Math.random() * types.length)];
+                }
+
+                let direction = 'tp_to_cn';
+                if (qType === 'cn_to_tp') direction = 'cn_to_tp';
+                if (qType === 'listening') direction = 'listening';
+
+                const correctAnswer = (direction === 'cn_to_tp' || direction === 'listening') ? item.tp : item.cn;
+                
+                const otherItems = allWordsWithKey.filter(w => w.tp !== item.tp);
+                const shuffledOthers = [...otherItems].sort(() => 0.5 - Math.random());
+                const wrongOptions = shuffledOthers.slice(0, 3).map(w => (direction === 'cn_to_tp' || direction === 'listening') ? w.tp : w.cn);
+                const options = [correctAnswer, ...wrongOptions].sort(() => 0.5 - Math.random());
+
+                return {
+                  type: direction,
+                  questionText: direction === 'cn_to_tp' ? item.cn : item.tp,
+                  correctAnswer,
+                  options,
+                  item
+                };
+              });
             }
-            // 隨機抽選 10 題（若不足 10 題則取全部）
-            const shuffled = [...sourceList].sort(() => 0.5 - Math.random());
-            const selectedCount = Math.min(10, shuffled.length);
-            const chosen = shuffled.slice(0, selectedCount);
-
-            const questions = chosen.map(item => {
-              // 決定考題方向
-              const direction = Math.random() > 0.5 ? 'tp_to_cn' : 'cn_to_tp';
-              const correctAnswer = direction === 'tp_to_cn' ? item.cn : item.tp;
-              
-              // 產生 3 個錯誤選項
-              const otherItems = allWordsWithKey.filter(w => w.tp !== item.tp);
-              const shuffledOthers = [...otherItems].sort(() => 0.5 - Math.random());
-              const wrongOptions = shuffledOthers.slice(0, 3).map(w => direction === 'tp_to_cn' ? w.cn : w.tp);
-
-              const options = [...wrongOptions, correctAnswer].sort(() => 0.5 - Math.random());
-
-              return {
-                item,
-                direction,
-                questionText: direction === 'tp_to_cn' ? item.tp : item.cn,
-                correctAnswer,
-                options
-              };
-            });
 
             setQuizQuestions(questions);
             setCurrentQuizIndex(0);
@@ -237,6 +297,10 @@
             setQuizScore(0);
             setWrongQuestions([]);
             setQuizState('playing');
+
+            if (questions.length > 0 && questions[0].type === 'listening') {
+              setTimeout(() => speak(questions[0].item.tp), 500);
+            }
           };
 
           const handleAnswerSelect = (option) => {
@@ -255,9 +319,14 @@
 
           const handleNextQuestion = () => {
             if (currentQuizIndex + 1 < quizQuestions.length) {
-              setCurrentQuizIndex(prev => prev + 1);
+              const nextIdx = currentQuizIndex + 1;
+              setCurrentQuizIndex(nextIdx);
               setSelectedOption(null);
               setIsAnswered(false);
+
+              if (quizQuestions[nextIdx].type === 'listening') {
+                setTimeout(() => speak(quizQuestions[nextIdx].item.tp), 400);
+              }
             } else {
               setQuizState('result');
             }
@@ -580,29 +649,62 @@
                         
                         {/* Quiz Start Screen */}
                         {quizState === 'start' && (
-                          <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200 text-center">
+                          <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
                             <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner">
                               <Trophy size={32} />
                             </div>
-                            <h3 className="text-2xl font-bold text-slate-800 mb-2">Toki Pona 隨堂測驗</h3>
-                            <p className="text-slate-600 mb-8 max-w-md mx-auto">
-                              透過 4 選 1 選擇題挑戰您的字彙實力！支援「看道本語選中文」與「看中文選道本語」，每輪 10 題。
+                            <h3 className="text-2xl font-bold text-slate-800 mb-2 text-center">Toki Pona 隨堂測驗</h3>
+                            <p className="text-slate-600 mb-6 text-center max-w-md mx-auto">
+                              透過多元題型挑戰您的道本語實力！請選擇測驗類型與範圍：
                             </p>
+
+                            {/* Quiz Type Selector */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+                              {[
+                                { id: 'mixed', label: '綜合混合測驗', icon: Zap, desc: '涵蓋各類題型' },
+                                { id: 'vocab', label: '單字釋義測驗', icon: Book, desc: '道本語與中文互選' },
+                                { id: 'listening', label: '發音聽力測驗', icon: Volume2, desc: '聽發音選單字/釋義' },
+                                { id: 'cloze', label: '例句克漏字', icon: MessageSquare, desc: '例句挖空填空' },
+                              ].map(m => {
+                                const IconComp = m.icon;
+                                const isSelected = selectedQuizType === m.id;
+                                return (
+                                  <button
+                                    key={m.id}
+                                    onClick={() => setSelectedQuizType(m.id)}
+                                    className={`p-4 rounded-xl border-2 text-left transition-all flex flex-col justify-between ${
+                                      isSelected 
+                                        ? 'border-purple-600 bg-purple-50 text-purple-900 shadow-sm' 
+                                        : 'border-slate-200 hover:border-slate-300 bg-slate-50 text-slate-700'
+                                    }`}
+                                  >
+                                    <div>
+                                      <div className="flex items-center justify-between mb-2">
+                                        <IconComp size={20} className={isSelected ? 'text-purple-600' : 'text-slate-500'} />
+                                        {isSelected && <Check size={16} className="text-purple-600 font-bold" />}
+                                      </div>
+                                      <div className="font-bold text-sm mb-1">{m.label}</div>
+                                    </div>
+                                    <div className="text-[11px] text-slate-500">{m.desc}</div>
+                                  </button>
+                                );
+                              })}
+                            </div>
 
                             <div className="flex flex-col sm:flex-row justify-center gap-4">
                               <button
-                                onClick={() => startQuiz(allWordsWithKey)}
+                                onClick={() => startQuiz(allWordsWithKey, selectedQuizType)}
                                 className="px-6 py-3.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
                               >
                                 <Zap size={20} />
-                                開始全部詞彙測驗 (10題)
+                                開始測驗 (10題)
                               </button>
 
-                              {masteredCount > 0 && (
+                              {masteredCount > 0 && selectedQuizType !== 'cloze' && (
                                 <button
                                   onClick={() => {
                                     const masteredList = allWordsWithKey.filter(w => masteredWords[w.key]);
-                                    startQuiz(masteredList);
+                                    startQuiz(masteredList, selectedQuizType);
                                   }}
                                   className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
                                 >
@@ -638,18 +740,46 @@
                               {/* Question Card */}
                               <div className="text-center mb-8">
                                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">
-                                  {currentQ.direction === 'tp_to_cn' ? '請選擇正確的中文意思：' : '請選擇正確的 Toki Pona 單字：'}
+                                  {currentQ.type === 'tp_to_cn' && '請選擇正確的中文意思：'}
+                                  {currentQ.type === 'cn_to_tp' && '請選擇正確的 Toki Pona 單字：'}
+                                  {currentQ.type === 'listening' && '請聆聽發音，選出對應的 Toki Pona 單字：'}
+                                  {currentQ.type === 'cloze' && '例句克漏字填空：選出填入 _____ 的正確單字'}
                                 </span>
-                                <h3 className="text-3xl md:text-4xl font-bold text-slate-800 font-serif mb-3">
-                                  {currentQ.questionText}
-                                </h3>
-                                {currentQ.direction === 'tp_to_cn' && (
-                                  <button 
-                                    onClick={() => speak(currentQ.questionText)}
-                                    className="inline-flex items-center gap-1.5 text-xs text-purple-600 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded-full transition-colors font-medium"
-                                  >
-                                    <Volume2 size={14} /> 聽取發音
-                                  </button>
+
+                                {currentQ.type === 'listening' ? (
+                                  <div className="py-6">
+                                    <button
+                                      onClick={() => speak(currentQ.item.tp)}
+                                      className="w-24 h-24 bg-purple-600 hover:bg-purple-700 text-white rounded-full flex items-center justify-center mx-auto shadow-xl transition-all hover:scale-105 active:scale-95 group"
+                                      title="點擊播放語音"
+                                    >
+                                      <Volume2 size={40} className="group-hover:animate-pulse" />
+                                    </button>
+                                    <p className="text-xs text-purple-600 font-medium mt-4">點擊按鈕重複聆聽發音</p>
+                                  </div>
+                                ) : currentQ.type === 'cloze' ? (
+                                  <div className="mb-4">
+                                    <h3 className="text-2xl md:text-3xl font-bold text-slate-800 font-serif mb-2 tracking-wide text-purple-700">
+                                      {currentQ.questionText}
+                                    </h3>
+                                    <p className="text-sm text-slate-500 bg-slate-100 py-1.5 px-4 rounded-full inline-block">
+                                      中文釋義：{currentQ.sentenceCn}
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <h3 className="text-3xl md:text-4xl font-bold text-slate-800 font-serif mb-3">
+                                      {currentQ.questionText}
+                                    </h3>
+                                    {currentQ.type === 'tp_to_cn' && (
+                                      <button 
+                                        onClick={() => speak(currentQ.questionText)}
+                                        className="inline-flex items-center gap-1.5 text-xs text-purple-600 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded-full transition-colors font-medium"
+                                      >
+                                        <Volume2 size={14} /> 聽取發音
+                                      </button>
+                                    )}
+                                  </div>
                                 )}
                               </div>
 
@@ -696,7 +826,11 @@
                                       )}
                                     </div>
                                     <p className="text-xs text-slate-500">
-                                      單字: <strong className="text-slate-700">{currentQ.item.tp}</strong> = {currentQ.item.cn} ({currentQ.item.type})
+                                      {currentQ.type === 'cloze' ? (
+                                        <span>完整例句: <strong className="text-slate-700 font-serif">{currentQ.originalTp}</strong> ({currentQ.sentenceCn})</span>
+                                      ) : (
+                                        <span>單字: <strong className="text-slate-700">{currentQ.item.tp}</strong> = {currentQ.item.cn} ({currentQ.item.type})</span>
+                                      )}
                                     </p>
                                   </div>
 
@@ -775,6 +909,15 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
+
+        // Register Service Worker for PWA Offline Support
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+              .then(reg => console.log('ServiceWorker registration successful: ', reg.scope))
+              .catch(err => console.log('ServiceWorker registration failed: ', err));
+          });
+        }
     </script>
 </body>
 </html>
