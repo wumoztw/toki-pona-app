@@ -1043,7 +1043,7 @@
                                               <Volume2 size={16} />
                                             </button>
                                           </div>
-                                          <p className="text-xs mt-1 leading-relaxed" style={{color: '#6b6460'}}>{round.cn}</p>
+                                          <p className="text-xs mt-1 leading-relaxed" style={{color: '#3d3935'}}>{round.cn}</p>
                                         </div>
                                       </div>
                                     ))}
@@ -1064,7 +1064,7 @@
                                 <MessageSquare size={24} style={{color: "#8a9ba8"}} />
                               </div>
                               <div>
-                                <h3 className="text-xl font-bold text-white">
+                                <h3 className="text-xl font-bold" style={{color: "#2c2825"}}>
                                   {selectedCategory.id === 'stories' ? '閱讀練習' : '實用例句練習'}
                                 </h3>
                                 <p className="text-xs" style={{color: "#6b6460"}}>點擊文字以聆聽發音</p>
@@ -1080,12 +1080,12 @@
                                 >
                                   <div className="flex items-start justify-between w-full">
                                      <div className="flex gap-3 w-full">
-                                        <span className="font-mono text-sm opacity-50 mt-1 flex-shrink-0" style={{color: "#8a9ba8"}}>
+                                        <span className="font-mono text-sm font-semibold mt-1 flex-shrink-0" style={{color: "#8a9ba8"}}>
                                           {selectedCategory.id === 'stories' ? <FileText size={16} /> : `0${i + 1}`}
                                         </span>
                                         <div className="w-full">
                                           {showSitelen && (
-                                            <p className="sitelen-pona text-2xl text-amber-400 mb-1 leading-snug tracking-wider select-none">
+                                            <p className="sitelen-pona text-2xl mb-1 leading-snug tracking-wider select-none" style={{color: "#b09070"}}>
                                               {sent.tp.toLowerCase().replace(/[^a-z ]/g, '')}
                                             </p>
                                           )}
@@ -1097,8 +1097,8 @@
                                      <Volume2 size={16} className="opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0 mt-1 ml-2" style={{color: "#8a9ba8"}} />
                                   </div>
                                   
-                                  <div className="pl-8 transition-colors ml-1 mt-2" style={{borderLeft: "2px solid #e0dbd3"}}>
-                                    <p className="text-sm leading-relaxed" style={{color: "#6b6460"}}>
+                                  <div className="pl-8 transition-colors ml-1 mt-2" style={{borderLeft: "3px solid #8a9ba8"}}>
+                                    <p className="text-sm leading-relaxed font-normal" style={{color: "#3d3935"}}>
                                       {sent.cn}
                                     </p>
                                   </div>
@@ -1187,7 +1187,7 @@
                                   onClick={() => {
                                     startQuiz(mistakesList, selectedQuizType);
                                   }}
-                                  className="px-6 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
+                                  className="px-6 py-3.5 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 hover:opacity-90 active:scale-95" style={{backgroundColor: "#b08088"}}
                                 >
                                   <Hash size={20} />
                                   🎯 錯題本弱點強化 ({mistakesList.length}題)
