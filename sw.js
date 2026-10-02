@@ -1,10 +1,11 @@
-const CACHE_NAME = 'toki-pona-v1';
+const CACHE_NAME = 'toki-pona-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './data.js',
   './manifest.json',
   './icon.svg',
+  './linja-pona.otf',
   'https://cdn.tailwindcss.com',
   'https://unpkg.com/react@18/umd/react.production.min.js',
   'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
