@@ -62,7 +62,8 @@
           Palette: (p) => <IconWrapper iconClass="ph-bold ph-palette" {...p} />,
           Zap: (p) => <IconWrapper iconClass="ph-bold ph-lightning" {...p} />,
           PenTool: (p) => <IconWrapper iconClass="ph-bold ph-pen-nib" {...p} />,
-          FileText: (p) => <IconWrapper iconClass="ph-bold ph-file-text" {...p} />
+          FileText: (p) => <IconWrapper iconClass="ph-bold ph-file-text" {...p} />,
+          MessageSquare: (p) => <IconWrapper iconClass="ph-bold ph-chat-circle" {...p} />
         };
 
         const renderIcon = (iconKey, size = 20) => {
@@ -148,6 +149,39 @@
               [wordKey]: !prev[wordKey]
             }));
           };
+
+          // 錯題本持久化 (localStorage)
+          const [mistakes, setMistakes] = useState(() => {
+            try {
+              const saved = localStorage.getItem('toki_pona_mistakes');
+              return saved ? JSON.parse(saved) : {};
+            } catch (e) {
+              return {};
+            }
+          });
+
+          useEffect(() => {
+            try {
+              localStorage.setItem('toki_pona_mistakes', JSON.stringify(mistakes));
+            } catch (e) {}
+          }, [mistakes]);
+
+          const removeMistake = (wordKey, e) => {
+            if (e) e.stopPropagation();
+            setMistakes(prev => {
+              const next = { ...prev };
+              delete next[wordKey];
+              return next;
+            });
+          };
+
+          const clearAllMistakes = () => {
+            if (window.confirm('確定要清空整本錯題本嗎？')) {
+              setMistakes({});
+            }
+          };
+
+          const mistakesList = useMemo(() => Object.values(mistakes), [mistakes]);
 
           // 計算總單字與已掌握數
           const allWordsWithKey = useMemo(() => {
@@ -314,6 +348,20 @@
               setQuizScore(prev => prev + 1);
             } else {
               setWrongQuestions(prev => [...prev, currentQ]);
+              if (currentQ.item && currentQ.item.tp) {
+                const wordKey = currentQ.item.key || currentQ.item.tp;
+                setMistakes(prev => ({
+                  ...prev,
+                  [wordKey]: {
+                    key: wordKey,
+                    tp: currentQ.item.tp,
+                    cn: currentQ.item.cn || currentQ.correctAnswer,
+                    type: currentQ.item.type || '測驗錯題',
+                    count: (prev[wordKey]?.count || 0) + 1,
+                    lastWrong: Date.now()
+                  }
+                }));
+              }
             }
           };
 
@@ -593,8 +641,67 @@
                            )}
                         </div>
 
+                        {/* Daily Dialogues Section (When Category has Dialogues) */}
+                        {activeTab === 'learn' && selectedCategory.dialogues && selectedCategory.dialogues.length > 0 && (
+                          <div className="bg-slate-900 rounded-2xl p-6 md:p-8 text-slate-300 shadow-2xl relative overflow-hidden mb-8">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-teal-600 rounded-full filter blur-[100px] opacity-20 pointer-events-none"></div>
+                            
+                            <div className="flex items-center gap-3 mb-6 relative z-10">
+                              <div className="p-2 bg-teal-500/20 rounded-lg">
+                                <MessageSquare className="text-teal-400" size={24} />
+                              </div>
+                              <div>
+                                <h3 className="text-xl font-bold text-white">日常實用情境對話</h3>
+                                <p className="text-slate-400 text-xs">點擊小喇叭聆聽發音，沉浸式練習實用交際會話</p>
+                              </div>
+                            </div>
+
+                            <div className="space-y-6 relative z-10">
+                              {selectedCategory.dialogues.map((diag, dIdx) => (
+                                <div key={dIdx} className="bg-slate-800/60 rounded-xl p-5 border border-slate-700">
+                                  <h4 className="text-md font-semibold text-teal-300 mb-4 pb-2 border-b border-slate-700/60 flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-teal-400"></span>
+                                    {diag.sceneTitle}
+                                  </h4>
+                                  <div className="space-y-3">
+                                    {diag.rounds.map((round, rIdx) => (
+                                      <div 
+                                        key={rIdx} 
+                                        className={`flex items-start gap-3 p-3.5 rounded-xl transition-all ${
+                                          round.speaker === 'A' 
+                                            ? 'bg-slate-900/80 border border-slate-700/60' 
+                                            : 'bg-teal-950/40 border border-teal-800/40'
+                                        }`}
+                                      >
+                                        <span className={`px-2 py-0.5 rounded text-xs font-bold mt-0.5 flex-shrink-0 ${
+                                          round.speaker === 'A' ? 'bg-indigo-600 text-white' : 'bg-teal-600 text-white'
+                                        }`}>
+                                          {round.speaker}
+                                        </span>
+                                        <div className="flex-1">
+                                          <div className="flex items-center justify-between">
+                                            <p className="text-slate-100 font-medium font-serif text-base leading-snug">{round.tp}</p>
+                                            <button 
+                                              onClick={() => speak(round.tp)}
+                                              className="p-1.5 text-slate-400 hover:text-teal-300 hover:bg-slate-800 rounded-lg transition-all ml-2 flex-shrink-0"
+                                              title="點擊發音"
+                                            >
+                                              <Volume2 size={16} />
+                                            </button>
+                                          </div>
+                                          <p className="text-slate-400 text-xs mt-1 leading-relaxed">{round.cn}</p>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
                         {/* Context Sentences Section (Only in Learn Mode) */}
-                        {activeTab === 'learn' && (
+                        {activeTab === 'learn' && selectedCategory.sentences && selectedCategory.sentences.length > 0 && (
                           <div className="bg-slate-900 rounded-2xl p-6 md:p-8 text-slate-300 shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600 rounded-full filter blur-[100px] opacity-20 pointer-events-none"></div>
                             
@@ -691,7 +798,7 @@
                               })}
                             </div>
 
-                            <div className="flex flex-col sm:flex-row justify-center gap-4">
+                            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
                               <button
                                 onClick={() => startQuiz(allWordsWithKey, selectedQuizType)}
                                 className="px-6 py-3.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
@@ -712,7 +819,59 @@
                                   測驗已學會單字 ({masteredCount}題)
                                 </button>
                               )}
+
+                              {mistakesList.length > 0 && selectedQuizType !== 'cloze' && (
+                                <button
+                                  onClick={() => {
+                                    startQuiz(mistakesList, selectedQuizType);
+                                  }}
+                                  className="px-6 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
+                                >
+                                  <Hash size={20} />
+                                  🎯 錯題本弱點強化 ({mistakesList.length}題)
+                                </button>
+                              )}
                             </div>
+
+                            {/* 錯題本總覽清單 */}
+                            {mistakesList.length > 0 && (
+                              <div className="mt-8 pt-6 border-t border-slate-200 text-left">
+                                <div className="flex items-center justify-between mb-4">
+                                  <div className="flex items-center gap-2">
+                                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+                                    <h4 className="font-bold text-slate-800 text-sm">錯題本紀錄清單 ({mistakesList.length})</h4>
+                                  </div>
+                                  <button
+                                    onClick={clearAllMistakes}
+                                    className="text-xs text-rose-500 hover:text-rose-700 transition-colors"
+                                  >
+                                    清空錯題本
+                                  </button>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                                  {mistakesList.map((mItem, idx) => (
+                                    <div key={idx} className="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs">
+                                      <div>
+                                        <span className="font-bold text-slate-900 font-serif mr-2">{mItem.tp}</span>
+                                        <span className="text-slate-500">{mItem.cn}</span>
+                                        {mItem.count > 1 && (
+                                          <span className="ml-1 px-1.5 py-0.2 bg-rose-100 text-rose-700 rounded-full font-mono text-[10px]">
+                                            錯 {mItem.count} 次
+                                          </span>
+                                        )}
+                                      </div>
+                                      <button
+                                        onClick={(e) => removeMistake(mItem.key || mItem.tp, e)}
+                                        className="text-slate-400 hover:text-rose-500 p-1"
+                                        title="移出錯題本"
+                                      >
+                                        <X size={14} />
+                                      </button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )}
 

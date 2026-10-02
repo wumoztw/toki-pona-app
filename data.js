@@ -412,5 +412,72 @@ window.VOCAB_DATA = [
         cn: '今天對我們社群來說很重要。所有人都來到廣場（開闊地）。有許多食物和甜飲料。人們用樂器演奏音樂。男人和女人在跳舞。小孩玩著果實。大家都感到快樂。我對我的愛人說：「這時刻很甜美。我希望能停留在這裡。」'
       }
     ]
+  },
+  {
+    id: 'dialogues',
+    title: '日常情境對話 (Conversations)',
+    icon: 'MessageSquare',
+    description: '精選 5 大生活實用場景，透過雙人對話氣泡卡片與語音朗讀練習實際交際。',
+    color: 'bg-teal-600',
+    words: [
+      { tp: 'pali', cn: '工作 / 做', type: '動詞' },
+      { tp: 'mani', cn: '錢 / 財富', type: '名詞' },
+      { tp: 'ijo', cn: '東西 / 事情', type: '名詞' },
+      { tp: 'wile', cn: '想要 / 需要', type: '動詞' },
+      { tp: 'pona', cn: '好 / 棒 / 簡潔', type: '修飾' },
+    ],
+    sentences: [],
+    dialogues: [
+      {
+        sceneTitle: '1. 日常問候與初次見面 (Greetings & Meeting)',
+        rounds: [
+          { speaker: 'A', tp: 'toki! sina pilin seme?', cn: '嗨！你感覺怎麼樣？(你好嗎？)' },
+          { speaker: 'B', tp: 'toki! mi pilin pona. sina toki e seme?', cn: '嗨！我感覺很好。你說了什麼？(你呢？)' },
+          { speaker: 'A', tp: 'nimi mi li Alan. nimi sina li seme?', cn: '我的名字是 Alan。你的名字是什麼？' },
+          { speaker: 'B', tp: 'nimi mi li Lina. tenpo ni la mi kama sona e toki pona.', cn: '我的名字是 Lina. 我現在正在學 Toki Pona。' },
+          { speaker: 'A', tp: 'ni li pona mute! mi tu li jan pona.', cn: '這太棒了！我們兩個是好朋友。' }
+        ]
+      },
+      {
+        sceneTitle: '2. 市場購物與問價 (Market & Shopping)',
+        rounds: [
+          { speaker: 'A', tp: 'o lukin e ni! kili ni li pona lukin.', cn: '看這個！這個水果看起來很好看。' },
+          { speaker: 'B', tp: 'ona li jseli anu seme? mani seme li wile?', cn: '它甜嗎？需要多少錢？(多少錢？)' },
+          { speaker: 'A', tp: 'mani lili taso li wile. ona li suwi mute.', cn: '只需要一點錢。它非常甜。' },
+          { speaker: 'B', tp: 'pona! mi wile e kili tu.', cn: '太好了！我要兩個水果。' },
+          { speaker: 'A', tp: 'ni li mani sina. tenpo pona!', cn: '這是你的錢。祝你有美好的一天！' }
+        ]
+      },
+      {
+        sceneTitle: '3. 餐廳點餐與飲食 (Dining & Food)',
+        rounds: [
+          { speaker: 'A', tp: 'moku li lon. sina wile moku e seme?', cn: '食物來了。你想吃什麼？' },
+          { speaker: 'B', tp: 'mi wile moku e pan e kili mute.', cn: '我想吃麵包和很多水果。' },
+          { speaker: 'A', tp: 'telo seli anu telo wawa li wile tawa sina?', cn: '你想要熱水(茶/湯)還是能量水(咖啡/飲料)？' },
+          { speaker: 'B', tp: 'telo seli li pona. mi wile moku.', cn: '熱水很好。我想要進食了。' },
+          { speaker: 'A', tp: 'o moku pona!', cn: '請慢用！(吃得開心！)' }
+        ]
+      },
+      {
+        sceneTitle: '4. 問路與方向引導 (Asking Directions)',
+        rounds: [
+          { speaker: 'A', tp: 'toki! tomo sona li lon seme?', cn: '請問！學校(學習的房子)在哪裡？' },
+          { speaker: 'B', tp: 'o tawa nasin ni. o tawa sinpin tenpo lili.', cn: '走這條路。向前走一小段。' },
+          { speaker: 'A', tp: 'tomo sona li lon poka anu seme?', cn: '學校在旁邊嗎？' },
+          { speaker: 'B', tp: 'lon. ona li lon poka pi tomo moku.', cn: '對。它在餐廳旁邊。' },
+          { speaker: 'A', tp: 'ona li pona mute. tenpo tawa pona!', cn: '太感謝了。一路平安！' }
+        ]
+      },
+      {
+        sceneTitle: '5. 情感交流與關懷 (Emotions & Comfort)',
+        rounds: [
+          { speaker: 'A', tp: 'sina pilin ike. ijo seme li pakala?', cn: '你心情不好。發生什麼壞事了嗎？' },
+          { speaker: 'B', tp: 'mi pali mute. tenpo lili lape li lon ala.', cn: '我工作很多。最近睡眠不足。' },
+          { speaker: 'A', tp: 'o awen. tenpo pimeja la sina o lape pona lon supa.', cn: '保重。今晚你一定要在床上好好睡覺。' },
+          { speaker: 'B', tp: 'toki sina li pana e wawa tawa mi. tenpo pona tawa sina.', cn: '你的話給了我力量。謝謝你。' },
+          { speaker: 'A', tp: 'mi olin e sina. mi tu li jan pona ale.', cn: '我愛你。我們永遠是好朋友。' }
+        ]
+      }
+    ]
   }
 ];
