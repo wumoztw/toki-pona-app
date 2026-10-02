@@ -208,6 +208,43 @@
             }
           });
 
+          // 單字自訂筆記持久化 (localStorage: toki_pona_notes)
+          const [notes, setNotes] = useState(() => {
+            try {
+              const saved = localStorage.getItem('toki_pona_notes');
+              return saved ? JSON.parse(saved) : {};
+            } catch (e) {
+              return {};
+            }
+          });
+
+          useEffect(() => {
+            try {
+              localStorage.setItem('toki_pona_notes', JSON.stringify(notes));
+            } catch (e) {}
+          }, [notes]);
+
+          // 正在編輯筆記的單字 key
+          const [editingNoteKey, setEditingNoteKey] = useState(null);
+          const [noteInputText, setNoteInputText] = useState('');
+
+          const saveNote = (wordKey, text) => {
+            setNotes(prev => {
+              const next = { ...prev };
+              if (!text || !text.trim()) {
+                delete next[wordKey];
+              } else {
+                next[wordKey] = text.trim();
+              }
+              return next;
+            });
+            setEditingNoteKey(null);
+          };
+
+          const notedCount = useMemo(() => {
+            return Object.values(notes).filter(n => n && n.trim().length > 0).length;
+          }, [notes]);
+
           useEffect(() => {
             try {
               localStorage.setItem('toki_pona_mistakes', JSON.stringify(mistakes));
@@ -261,9 +298,11 @@
             } else if (activeTab === 'all') {
               list = allWordsWithKey;
               if (searchTerm) {
+                const lowerTerm = searchTerm.toLowerCase();
                 list = list.filter(w => 
-                  w.tp.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                  w.cn.includes(searchTerm)
+                  w.tp.toLowerCase().includes(lowerTerm) || 
+                  w.cn.includes(searchTerm) ||
+                  (notes[w.key] && notes[w.key].toLowerCase().includes(lowerTerm))
                 );
               }
             }
@@ -272,10 +311,12 @@
               list = list.filter(w => masteredWords[w.key]);
             } else if (statusFilter === 'unmastered') {
               list = list.filter(w => !masteredWords[w.key]);
+            } else if (statusFilter === 'noted') {
+              list = list.filter(w => notes[w.key] && notes[w.key].trim().length > 0);
             }
 
             return list;
-          }, [selectedCategory, searchTerm, activeTab, allWordsWithKey, statusFilter, masteredWords]);
+          }, [selectedCategory, searchTerm, activeTab, allWordsWithKey, statusFilter, masteredWords, notes]);
 
 
           // --- 3. 互動式測驗模式 (Quiz Mode) ---
@@ -286,7 +327,7 @@
           const [isAnswered, setIsAnswered] = useState(false);
           const [quizScore, setQuizScore] = useState(0);
           const [wrongQuestions, setWrongQuestions] = useState([]);
-          const [selectedQuizType, setSelectedQuizType] = useState('mixed'); // 'mixed' | 'vocab' | 'listening' | 'cloze'
+          const [selectedQuizType, setSelectedQuizType] = useState('mixed'); // 'mixed' | 'vocab' | 'listening' | 'cloze' | 'sitelen'
 
           // 開始新測驗
           const startQuiz = (sourceList = allWordsWithKey, mode = selectedQuizType) => {
@@ -347,24 +388,53 @@
               questions = chosen.map(item => {
                 let qType = mode;
                 if (mode === 'mixed') {
-                  const types = ['tp_to_cn', 'cn_to_tp', 'listening'];
+                  const types = ['tp_to_cn', 'cn_to_tp', 'listening', 'sitelen_to_tp', 'cn_to_sitelen', 'listening_to_sitelen'];
+                  qType = types[Math.floor(Math.random() * types.length)];
+                } else if (mode === 'sitelen') {
+                  const types = ['sitelen_to_tp', 'cn_to_sitelen', 'listening_to_sitelen'];
                   qType = types[Math.floor(Math.random() * types.length)];
                 }
 
                 let direction = 'tp_to_cn';
                 if (qType === 'cn_to_tp') direction = 'cn_to_tp';
                 if (qType === 'listening') direction = 'listening';
+                if (qType === 'sitelen_to_tp') direction = 'sitelen_to_tp';
+                if (qType === 'cn_to_sitelen') direction = 'cn_to_sitelen';
+                if (qType === 'listening_to_sitelen') direction = 'listening_to_sitelen';
 
-                const correctAnswer = (direction === 'cn_to_tp' || direction === 'listening') ? item.tp : item.cn;
+                const pureTp = item.tp.replace(/\s*\(.*?\)/, '').toLowerCase();
+                const itemMeaning = getMeaning(item);
+
+                let correctAnswer = itemMeaning;
+                if (direction === 'cn_to_tp' || direction === 'listening' || direction === 'sitelen_to_tp') {
+                  correctAnswer = item.tp;
+                } else if (direction === 'cn_to_sitelen' || direction === 'listening_to_sitelen') {
+                  correctAnswer = pureTp;
+                }
                 
                 const otherItems = allWordsWithKey.filter(w => w.tp !== item.tp);
                 const shuffledOthers = [...otherItems].sort(() => 0.5 - Math.random());
-                const wrongOptions = shuffledOthers.slice(0, 3).map(w => (direction === 'cn_to_tp' || direction === 'listening') ? w.tp : w.cn);
+                const wrongOptions = shuffledOthers.slice(0, 3).map(w => {
+                  if (direction === 'cn_to_tp' || direction === 'listening' || direction === 'sitelen_to_tp') {
+                    return w.tp;
+                  }
+                  if (direction === 'cn_to_sitelen' || direction === 'listening_to_sitelen') {
+                    return w.tp.replace(/\s*\(.*?\)/, '').toLowerCase();
+                  }
+                  return getMeaning(w);
+                });
                 const options = [correctAnswer, ...wrongOptions].sort(() => 0.5 - Math.random());
+
+                let questionText = item.tp;
+                if (direction === 'cn_to_tp' || direction === 'cn_to_sitelen') {
+                  questionText = itemMeaning;
+                } else if (direction === 'sitelen_to_tp') {
+                  questionText = pureTp;
+                }
 
                 return {
                   type: direction,
-                  questionText: direction === 'cn_to_tp' ? item.cn : item.tp,
+                  questionText,
                   correctAnswer,
                   options,
                   item
@@ -380,7 +450,7 @@
             setWrongQuestions([]);
             setQuizState('playing');
 
-            if (questions.length > 0 && questions[0].type === 'listening') {
+            if (questions.length > 0 && (questions[0].type === 'listening' || questions[0].type === 'listening_to_sitelen')) {
               setTimeout(() => speak(questions[0].item.tp), 500);
             }
           };
@@ -420,7 +490,7 @@
               setSelectedOption(null);
               setIsAnswered(false);
 
-              if (quizQuestions[nextIdx].type === 'listening') {
+              if (quizQuestions[nextIdx].type === 'listening' || quizQuestions[nextIdx].type === 'listening_to_sitelen') {
                 setTimeout(() => speak(quizQuestions[nextIdx].item.tp), 400);
               }
             } else {
@@ -641,6 +711,12 @@
                         >
                           未學會 ({totalWordsCount - masteredCount})
                         </button>
+                        <button
+                          onClick={() => setStatusFilter('noted')}
+                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'noted' ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-800'}`}
+                        >
+                          筆記 ({notedCount})
+                        </button>
                       </div>
                     )}
 
@@ -688,7 +764,7 @@
                         <div className="mb-6">
                             {/* 行動端快速篩選列 (手機上置頂展示) */}
                             {(activeTab === "learn" || activeTab === "all") && (
-                              <div className="lg:hidden flex bg-slate-200/80 p-1 rounded-xl text-xs font-medium mb-4 w-full justify-between">
+                              <div className="lg:hidden flex bg-slate-200/80 p-1 rounded-xl text-xs font-medium mb-4 w-full justify-between gap-1">
                                 <button
                                   onClick={() => setStatusFilter("all")}
                                   className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "all" ? "bg-white text-slate-800 shadow-sm font-bold" : "text-slate-600"}`}
@@ -706,6 +782,12 @@
                                   className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "unmastered" ? "bg-indigo-600 text-white shadow-sm font-bold" : "text-slate-600"}`}
                                 >
                                   未學 ({totalWordsCount - masteredCount})
+                                </button>
+                                <button
+                                  onClick={() => setStatusFilter("noted")}
+                                  className={`flex-1 py-1.5 rounded-lg transition-all text-center ${statusFilter === "noted" ? "bg-amber-500 text-slate-950 shadow-sm font-bold" : "text-slate-600"}`}
+                                >
+                                  筆記 ({notedCount})
                                 </button>
                               </div>
                             )}
@@ -742,7 +824,28 @@
                                         `}>
                                           {word.type}
                                         </span>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-1.5">
+                                          {/* 自訂筆記按鈕 */}
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              if (editingNoteKey === word.key) {
+                                                setEditingNoteKey(null);
+                                              } else {
+                                                setEditingNoteKey(word.key);
+                                                setNoteInputText(notes[word.key] || '');
+                                              }
+                                            }}
+                                            title="新增或編輯個人筆記"
+                                            className={`p-1.5 rounded-full transition-all ${
+                                              notes[word.key] 
+                                                ? 'bg-amber-100 text-amber-700 hover:bg-amber-200 shadow-sm' 
+                                                : 'bg-slate-100 text-slate-400 hover:bg-amber-50 hover:text-amber-600'
+                                            }`}
+                                          >
+                                            <FileText size={13} />
+                                          </button>
+
                                           {/* 已學會 / 收藏勾選按鈕 */}
                                           <button
                                             onClick={(e) => toggleMastered(word.key, e)}
@@ -772,6 +875,64 @@
                                         <p className="text-slate-400 text-xs mt-0.5">
                                           {word.cn}
                                         </p>
+                                      )}
+
+                                      {/* 個人筆記預覽 (若有筆記且非編輯狀態) */}
+                                      {notes[word.key] && editingNoteKey !== word.key && (
+                                        <div 
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setEditingNoteKey(word.key);
+                                            setNoteInputText(notes[word.key] || '');
+                                          }}
+                                          className="mt-2.5 p-2 bg-amber-50/90 border border-amber-200/80 rounded-lg text-xs text-amber-900 flex items-start gap-1.5 hover:bg-amber-100 transition-colors"
+                                          title="點擊編輯個人筆記"
+                                        >
+                                          <span className="text-amber-600 font-bold select-none text-[11px] leading-tight">📝</span>
+                                          <span className="line-clamp-2 leading-tight flex-1 text-[11px]">{notes[word.key]}</span>
+                                        </div>
+                                      )}
+
+                                      {/* 個人筆記編輯器 (若當前處於編輯狀態) */}
+                                      {editingNoteKey === word.key && (
+                                        <div 
+                                          onClick={(e) => e.stopPropagation()} 
+                                          className="mt-3 p-2.5 bg-amber-50 rounded-xl border border-amber-300 shadow-sm space-y-2"
+                                        >
+                                          <div className="flex items-center justify-between text-[11px] font-bold text-amber-800">
+                                            <span>自訂筆記 / 記憶口訣</span>
+                                            <button 
+                                              onClick={() => setEditingNoteKey(null)}
+                                              className="text-amber-600 hover:text-amber-800"
+                                            >
+                                              <X size={13} />
+                                            </button>
+                                          </div>
+                                          <textarea
+                                            value={noteInputText}
+                                            onChange={(e) => setNoteInputText(e.target.value)}
+                                            placeholder="寫下您的記憶口訣或筆記..."
+                                            className="w-full text-xs p-2 rounded-lg border border-amber-200 focus:outline-none focus:ring-1 focus:ring-amber-500 bg-white resize-none text-slate-800"
+                                            rows="2"
+                                            autoFocus
+                                          />
+                                          <div className="flex justify-end gap-1.5">
+                                            {notes[word.key] && (
+                                              <button
+                                                onClick={() => saveNote(word.key, '')}
+                                                className="px-2 py-1 rounded text-[11px] text-rose-600 hover:bg-rose-100 font-medium transition-colors"
+                                              >
+                                                刪除
+                                              </button>
+                                            )}
+                                            <button
+                                              onClick={() => saveNote(word.key, noteInputText)}
+                                              className="px-3 py-1 rounded bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] shadow-sm transition-colors"
+                                            >
+                                              儲存
+                                            </button>
+                                          </div>
+                                        </div>
                                       )}
                                     </div>
 
@@ -926,10 +1087,11 @@
                             </p>
 
                             {/* Quiz Type Selector */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
                               {[
                                 { id: 'mixed', label: '綜合混合測驗', icon: Zap, desc: '涵蓋各類題型' },
-                                { id: 'vocab', label: '單字釋義測驗', icon: Book, desc: '道本語與中文互選' },
+                                { id: 'vocab', label: '單字釋義測驗', icon: Book, desc: '道本語與釋義互選' },
+                                { id: 'sitelen', label: '象形文字測驗', icon: Feather, desc: 'Sitelen Pona 圖像測驗' },
                                 { id: 'listening', label: '發音聽力測驗', icon: Volume2, desc: '聽發音選單字/釋義' },
                                 { id: 'cloze', label: '例句克漏字', icon: MessageSquare, desc: '例句挖空填空' },
                               ].map(m => {
@@ -1059,13 +1221,16 @@
                               {/* Question Card */}
                               <div className="text-center mb-8">
                                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">
-                                  {currentQ.type === 'tp_to_cn' && '請選擇正確的中文意思：'}
+                                  {currentQ.type === 'tp_to_cn' && '請選擇正確的釋義意思：'}
                                   {currentQ.type === 'cn_to_tp' && '請選擇正確的 Toki Pona 單字：'}
                                   {currentQ.type === 'listening' && '請聆聽發音，選出對應的 Toki Pona 單字：'}
+                                  {currentQ.type === 'listening_to_sitelen' && '請聆聽發音，選出對應的 Sitelen Pona 象形文字：'}
+                                  {currentQ.type === 'sitelen_to_tp' && '請辨識 Sitelen Pona 象形文字，選出正確單字：'}
+                                  {currentQ.type === 'cn_to_sitelen' && '請依釋義，選出對應的 Sitelen Pona 象形文字：'}
                                   {currentQ.type === 'cloze' && '例句克漏字填空：選出填入 _____ 的正確單字'}
                                 </span>
 
-                                {currentQ.type === 'listening' ? (
+                                {currentQ.type === 'listening' || currentQ.type === 'listening_to_sitelen' ? (
                                   <div className="py-6">
                                     <button
                                       onClick={() => speak(currentQ.item.tp)}
@@ -1082,8 +1247,15 @@
                                       {currentQ.questionText}
                                     </h3>
                                     <p className="text-sm text-slate-500 bg-slate-100 py-1.5 px-4 rounded-full inline-block">
-                                      中文釋義：{currentQ.sentenceCn}
+                                      釋義：{currentQ.sentenceCn}
                                     </p>
+                                  </div>
+                                ) : currentQ.type === 'sitelen_to_tp' ? (
+                                  <div className="py-4">
+                                    <div className="sitelen-pona text-7xl text-amber-500 mb-2 leading-none select-none drop-shadow-sm">
+                                      {currentQ.questionText}
+                                    </div>
+                                    <span className="text-xs text-slate-400">這是哪一個單字的象形符號？</span>
                                   </div>
                                 ) : (
                                   <div>
@@ -1116,14 +1288,22 @@
                                     }
                                   }
 
+                                  const isSitelenOption = currentQ.type === 'cn_to_sitelen' || currentQ.type === 'listening_to_sitelen';
+
                                   return (
                                     <button
                                       key={idx}
                                       onClick={() => handleAnswerSelect(option)}
                                       disabled={isAnswered}
-                                      className={`p-4 rounded-xl border-2 font-medium text-lg transition-all text-center flex items-center justify-center ${btnStyle}`}
+                                      className={`p-4 rounded-xl border-2 font-medium text-lg transition-all text-center flex items-center justify-center min-h-[64px] ${btnStyle}`}
                                     >
-                                      <span>{option}</span>
+                                      {isSitelenOption ? (
+                                        <span className="sitelen-pona text-4xl text-amber-500 leading-none select-none">
+                                          {option}
+                                        </span>
+                                      ) : (
+                                        <span>{option}</span>
+                                      )}
                                     </button>
                                   );
                                 })}
@@ -1140,7 +1320,12 @@
                                         </span>
                                       ) : (
                                         <span className="text-rose-600 font-bold flex items-center gap-1">
-                                          <X size={18} /> 答錯了！正確答案是：{currentQ.correctAnswer}
+                                          <X size={18} /> 答錯了！正確答案是：
+                                          {(currentQ.type === 'cn_to_sitelen' || currentQ.type === 'listening_to_sitelen') ? (
+                                            <span className="sitelen-pona text-2xl text-amber-500 ml-1 leading-none">{currentQ.correctAnswer}</span>
+                                          ) : (
+                                            <span>{currentQ.correctAnswer}</span>
+                                          )}
                                         </span>
                                       )}
                                     </div>
@@ -1148,7 +1333,12 @@
                                       {currentQ.type === 'cloze' ? (
                                         <span>完整例句: <strong className="text-slate-700 font-serif">{currentQ.originalTp}</strong> ({currentQ.sentenceCn})</span>
                                       ) : (
-                                        <span>單字: <strong className="text-slate-700">{currentQ.item.tp}</strong> = {currentQ.item.cn} ({currentQ.item.type})</span>
+                                        <span className="flex items-center gap-1.5 flex-wrap">
+                                          <span className="sitelen-pona text-xl text-amber-500 leading-none select-none">
+                                            {currentQ.item.tp.replace(/\s*\(.*?\)/, '').toLowerCase()}
+                                          </span>
+                                          <span>單字: <strong className="text-slate-700">{currentQ.item.tp}</strong> = {getMeaning(currentQ.item)} ({currentQ.item.type})</span>
+                                        </span>
                                       )}
                                     </p>
                                   </div>
@@ -1213,6 +1403,36 @@
                                 返回學習首頁
                               </button>
                             </div>
+
+                            {wrongQuestions.length > 0 && (
+                              <div className="mt-8 pt-6 border-t border-slate-200 text-left">
+                                <h4 className="font-bold text-slate-800 text-sm mb-3">本次錯題檢討：</h4>
+                                <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                                  {wrongQuestions.map((wq, wIdx) => {
+                                    const tpWord = wq.item?.tp || wq.correctAnswer;
+                                    const pureTp = (tpWord || '').replace(/\s*\(.*?\)/, '').toLowerCase();
+                                    return (
+                                      <div key={wIdx} className="p-3 bg-rose-50/80 border border-rose-200 rounded-xl flex items-center justify-between text-xs">
+                                        <div className="flex items-center gap-2.5">
+                                          <span className="sitelen-pona text-2xl text-amber-600 leading-none select-none">{pureTp}</span>
+                                          <div>
+                                            <span className="font-bold text-slate-900 font-serif mr-1.5">{tpWord}</span>
+                                            <span className="text-slate-600">{getMeaning(wq.item)}</span>
+                                          </div>
+                                        </div>
+                                        <span className="text-rose-600 font-semibold font-mono">
+                                          {(wq.type === 'cn_to_sitelen' || wq.type === 'listening_to_sitelen') ? (
+                                            <span className="sitelen-pona text-xl text-amber-600">{wq.correctAnswer}</span>
+                                          ) : (
+                                            `正解: ${wq.correctAnswer}`
+                                          )}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )}
 
