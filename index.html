@@ -56,7 +56,7 @@
             src: url('./linja-pona.otf') format('opentype');
             font-display: swap;
         }
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap');
         
         .sitelen-pona {
             font-family: 'linja-pona', sans-serif;
@@ -68,6 +68,13 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #c8c3bc; border-radius: 3px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #b5a8a0; }
         body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; background-color: #f9f6f0; color: #2c2825; }
+    
+        /* --- Stitch Aesthetics Enhancements --- */
+        .border-1.5 { border-width: 1.5px; }
+        .shadow-xs { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+        h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important; }
+        .font-mono { font-family: 'Space Grotesk', monospace !important; }
+
     </style>
 </head>
 <body>
@@ -849,13 +856,13 @@
                                   <div 
                                     key={idx}
                                     onClick={() => speak(word.tp)}
-                                    className={`group bg-white rounded-xl border p-4 sm:p-5 hover:shadow-sm transition-all text-left relative overflow-hidden cursor-pointer flex flex-col justify-between active:scale-[0.99]
+                                    className={`group bg-white rounded-2xl border-1.5 p-5 sm:p-6 shadow-[0_4px_20px_-2px_rgba(91,123,90,0.06)] hover:shadow-md hover:-translate-y-0.5 transition-all text-left relative overflow-hidden cursor-pointer flex flex-col justify-between active:scale-[0.99]
                                       ${isMastered ? 'border-[#6f906a] bg-[#f0f5f1]/50' : 'border-[#e0dbd3] hover:border-[#5b7b5a]'}
                                     `}
                                   >
                                     <div>
                                       <div className="flex justify-between items-start mb-2">
-                                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded
+                                        <span className={`text-[11px] font-semibold tracking-wider px-3 py-1 rounded-full font-mono shadow-xs
                                           ${word.type === '動/名' ? 'bg-[#f5ede0] text-[#e07a48]' : 
                                             word.type === '助詞' || word.type === '介係' || word.type === '文法' ? 'bg-[#e6edf1] text-[#5b7b5a]' :
                                             word.type === '修飾' ? 'bg-[#f0e8e9] text-[#d4795a]' :
