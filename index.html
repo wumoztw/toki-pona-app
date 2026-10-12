@@ -1,672 +1,1561 @@
 <!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="app-version" content="1.2.0">
+    <meta name="updated-at" content="2026-10-03">
+    <title>Toki Pona Mastery - 從零開始學到會</title>
+    
+    <!-- 1. 引入 Tailwind CSS (樣式) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Washi Design System Tailwind Config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              washi: { bg: '#f9f6f0', surface: '#f5f3ef', sidebar: '#f0ede8', border: '#e0dbd3', hover: '#ece8e2' },
+              sumi: { DEFAULT: '#2c2825', secondary: '#6b6460', tertiary: '#9e9590' },
+              'washi-accent': '#5b7b5a',
+              'washi-amber': '#e07a48',
+              'washi-green': '#6f906a',
+              'washi-rose': '#d4795a',
+              'stitch-green': '#5b7b5a',
+              'stitch-clay': '#e07a48',
+            },
+          },
+        },
+      };
+    </script>
+    
+    <!-- 2. 引入 React 核心 -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- 3. 引入 Babel (翻譯機) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- 4. 引入 Phosphor Icons (圖示庫) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-<html class="light" lang="zh-TW"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Toki Pona App - lipu pi toki pona</title>
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Noto+Sans+TC:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- Tailwind CSS with custom theme config -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          "colors": {
-            "inverse-on-surface": "#f3f0ea",
-            "surface-container-highest": "#e5e2dc",
-            "on-secondary-container": "#732b00",
-            "on-surface": "#1c1c18",
-            "outline": "#737970",
-            "secondary-fixed-dim": "#ffb695",
-            "primary": "#436243",
-            "on-secondary-fixed-variant": "#7b2f00",
-            "secondary-container": "#fe915d",
-            "on-tertiary": "#ffffff",
-            "on-primary-container": "#eeffe9",
-            "on-primary": "#ffffff",
-            "tertiary-container": "#7a69a9",
-            "surface": "#fcf9f3",
-            "on-primary-fixed": "#032108",
-            "surface-container-lowest": "#ffffff",
-            "surface-tint": "#476646",
-            "on-tertiary-fixed-variant": "#4c3d79",
-            "on-error-container": "#93000a",
-            "on-secondary-fixed": "#351000",
-            "on-surface-variant": "#424841",
-            "on-tertiary-fixed": "#200e4b",
-            "surface-container": "#f0eee8",
-            "error-container": "#ffdad6",
-            "surface-bright": "#fcf9f3",
-            "inverse-primary": "#add0a9",
-            "on-secondary": "#ffffff",
-            "tertiary-fixed-dim": "#cfbdff",
-            "on-background": "#1c1c18",
-            "inverse-surface": "#31312d",
-            "surface-container-low": "#f6f3ed",
-            "primary-fixed-dim": "#add0a9",
-            "on-primary-fixed-variant": "#304e30",
-            "error": "#ba1a1a",
-            "secondary-fixed": "#ffdbcc",
-            "on-tertiary-container": "#fef8ff",
-            "surface-variant": "#e5e2dc",
-            "surface-container-high": "#ebe8e2",
-            "surface-dim": "#dcdad4",
-            "on-error": "#ffffff",
-            "tertiary-fixed": "#e8ddff",
-            "primary-container": "#5b7b5a",
-            "primary-fixed": "#c8ecc4",
-            "secondary": "#9b4517",
-            "background": "#fcf9f3",
-            "tertiary": "#61518e",
-            "outline-variant": "#c2c8be"
-          },
-          "borderRadius": {
-            "DEFAULT": "0.25rem",
-            "lg": "0.5rem",
-            "xl": "0.75rem",
-            "full": "9999px"
-          },
-          "spacing": {
-            "gutter": "1.25rem",
-            "space-xs": "0.25rem",
-            "space-md": "1rem",
-            "space-lg": "1.5rem",
-            "space-sm": "0.5rem",
-            "margin": "1.5rem",
-            "space-xl": "2.25rem"
-          },
-          "fontFamily": {
-            "display": ["Plus Jakarta Sans", "Noto Sans TC", "sans-serif"],
-            "headline-md": ["Plus Jakarta Sans", "Noto Sans TC", "sans-serif"],
-            "body-md": ["Plus Jakarta Sans", "Noto Sans TC", "sans-serif"],
-            "label-sm": ["Space Grotesk", "Noto Sans TC", "sans-serif"],
-            "display-mobile": ["Plus Jakarta Sans", "Noto Sans TC", "sans-serif"],
-            "body-sm": ["Plus Jakarta Sans", "Noto Sans TC", "sans-serif"],
-            "headline-lg": ["Plus Jakarta Sans", "Noto Sans TC", "sans-serif"],
-            "label-md": ["Space Grotesk", "Noto Sans TC", "sans-serif"],
-            "headline-lg-mobile": ["Plus Jakarta Sans", "Noto Sans TC", "sans-serif"],
-            "title-md": ["Plus Jakarta Sans", "Noto Sans TC", "sans-serif"],
-            "headline-sm": ["Plus Jakarta Sans", "Noto Sans TC", "sans-serif"],
-            "label-lg": ["Space Grotesk", "Noto Sans TC", "sans-serif"],
-            "body-lg": ["Plus Jakarta Sans", "Noto Sans TC", "sans-serif"]
-          },
-          "fontSize": {
-            "display": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
-            "body-md": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
-            "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.05em", "fontWeight": "600" }],
-            "display-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
-            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
-            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
-            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500" }],
-            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
-            "title-md": ["18px", { "lineHeight": "26px", "fontWeight": "500" }],
-            "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
-            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600" }],
-            "body-lg": ["17px", { "lineHeight": "26px", "fontWeight": "400" }]
-          }
+    <!-- 5. 引入 抽離的 VOCAB_DATA 資料 -->
+    <script src="./data.js"></script>
+
+    <!-- PWA Manifest & Meta -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#5b7b5a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TokiPona">
+    <link rel="apple-touch-icon" href="./icon.svg">
+
+    <style>
+        @font-face {
+            font-family: 'linja-pona';
+            src: url('./linja-pona.otf') format('opentype');
+            font-display: swap;
         }
-      }
-    }
-  </script>
-<style>
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-      line-height: 1;
-    }
-    .glyph-font {
-      font-family: 'Space Grotesk', system-ui, sans-serif;
-    }
-  </style>
-
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#5b7b5a">
-  <style>
-    @font-face {
-      font-family: 'linja-pona';
-      src: url('./linja-pona.otf') format('opentype');
-    }
-    .sitelen-pona {
-      font-family: 'linja-pona', sans-serif !important;
-    }
-  </style>
-
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        
+        .sitelen-pona {
+            font-family: 'linja-pona', sans-serif;
+            font-feature-settings: "liga" 1, "clig" 1, "calt" 1, "kern" 1, "mark" 1;
+            text-rendering: optimizeLegibility;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f0ede8; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c8c3bc; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #b5a8a0; }
+        body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; background-color: #f9f6f0; color: #2c2825; }
+    </style>
 </head>
-<body class="bg-surface text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col selection:bg-primary-fixed selection:text-on-primary-fixed">
-<!-- ================= TOP APP BAR (Shared Component) ================= -->
-<header class="docked full-width top-0 sticky z-50 bg-surface/90 dark:bg-inverse-surface/90 backdrop-blur-md shadow-sm border-b border-outline-variant/30 dark:border-outline-variant/20">
-<div class="flex justify-between items-center w-full px-8 py-3.5 max-w-7xl mx-auto">
-<!-- Brand & Subtitle -->
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-inner">
-<span class="text-xl leading-none select-none">🌱</span>
-</div>
-<div>
-<div class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary tracking-tight flex items-center gap-1.5">
-<span>Toki Pona App</span>
-<span class="px-2 py-0.5 rounded-full bg-surface-container text-primary text-xs font-semibold border border-outline-variant/40">道本語</span>
-</div>
-<p class="font-label-sm text-label-sm text-on-surface-variant font-medium tracking-wider">lipu pi toki pona · the simple life of good things</p>
-</div>
-</div>
-<!-- Navigation Links (Centered) -->
-<nav class="hidden lg:flex items-center gap-7">
-<a class="text-primary dark:text-inverse-primary font-bold border-b-2 border-primary dark:border-inverse-primary pb-1 font-label-lg text-label-lg active:translate-y-0.5 transition-transform duration-100 ease-out" href="#vocab">詞彙卡片</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors pb-1 font-label-lg text-label-lg" href="#quiz">測驗競技場</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors pb-1 font-label-lg text-label-lg" href="#dialogue">情境對話</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors pb-1 font-label-lg text-label-lg" href="#grammar">文法心得</a>
-</nav>
-<!-- Trailing Controls & User State -->
-<div class="flex items-center gap-3">
-<!-- Sitelen Pona Toggle Pill -->
-<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high border border-outline-variant/50 text-on-surface font-label-md text-label-md hover:bg-surface-container transition-all active:scale-95 shadow-sm">
-<span>🔣 象形文</span>
-<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-</button>
-<!-- Progress Mini Badge -->
-<div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant/40 shadow-sm">
-<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
-<span class="font-label-md text-label-md font-semibold text-secondary">14 天</span>
-<span class="text-outline-variant">|</span>
-<span class="font-label-md text-label-md text-on-surface-variant">45/120 詞彙</span>
-</div>
-<!-- Language Selector -->
-<button class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-outline-variant/40 hover:bg-surface-container transition text-on-surface-variant text-xs font-medium">
-<span class="material-symbols-outlined text-sm">translate</span>
-<span>繁中</span>
-</button>
-<!-- Mode & Sound -->
-<button class="p-2 rounded-full hover:bg-surface-container text-on-surface-variant transition" title="切換明亮/暗色">
-<span class="material-symbols-outlined text-base">light_mode</span>
-</button>
-<!-- User Pebble Avatar -->
-<div class="flex items-center gap-2 pl-1 border-l border-outline-variant/30">
-<div class="relative w-9 h-9 rounded-full bg-primary-fixed border border-primary/20 flex items-center justify-center text-primary font-bold text-sm shadow-sm" title="User Profile Avatar with Zen pebble frame">
-<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">account_circle</span>
-<span class="absolute -bottom-0.5 -right-0.5 bg-primary text-on-primary text-[9px] font-bold px-1 rounded-full leading-tight">Lv.3</span>
-</div>
-</div>
-</div>
-</div>
-</header>
-<!-- ================= SUB-HEADER: QUICK STATS & TABS ================= -->
-<section class="bg-surface-container-low border-b border-outline-variant/20">
-<div class="max-w-7xl mx-auto px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
-<!-- Horizontal Navigation Tabs -->
-<div class="flex items-center gap-2 overflow-x-auto py-0.5">
-<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-on-primary font-label-lg text-label-lg shadow-sm">
-<span>📖</span>
-<span>詞彙探索 (Vocabulary)</span>
-</button>
-<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container transition font-label-lg text-label-lg">
-<span>⚡</span>
-<span>測驗競技場 (Quiz Arena)</span>
-</button>
-<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container transition font-label-lg text-label-lg">
-<span>💬</span>
-<span>情境對話 (Dialogue)</span>
-</button>
-<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container transition font-label-lg text-label-lg">
-<span>🌱</span>
-<span>哲學與心法 (Philosophy)</span>
-</button>
-</div>
-<!-- Quick Metrics Tracker -->
-<div class="flex items-center gap-3 text-xs">
-<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant/30 text-on-surface-variant">
-<span class="w-2 h-2 rounded-full bg-primary"></span>
-<span class="font-medium">今日已複習 18 詞</span>
-</div>
-<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant/30 text-on-surface-variant">
-<span class="w-2 h-2 rounded-full bg-secondary"></span>
-<span class="font-medium">答對率 94%</span>
-</div>
-<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant/30 text-on-surface-variant">
-<span class="w-2 h-2 rounded-full bg-tertiary"></span>
-<span class="font-medium">象形文記憶庫 32/120</span>
-</div>
-</div>
-</div>
-</section>
-<!-- ================= MAIN DASHBOARD BODY ================= -->
-<main class="max-w-7xl mx-auto px-8 py-8 flex-1 w-full">
-<!-- Overall Progress Banner -->
-<div class="mb-8 p-5 bg-surface-container-lowest rounded-xl border border-outline-variant/30 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
-<div class="flex items-center gap-4 w-full md:w-auto">
-<div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-2xl flex-shrink-0">
-          ☀
-        </div>
-<div>
-<div class="flex items-center gap-2">
-<h1 class="font-headline-sm text-headline-sm text-on-surface font-semibold">道本語核心進程 · 45 / 120 核心詞彙精通</h1>
-<span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant text-xs font-bold">38% 完成</span>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">「toki pona li pona mute」— 簡單即美好。持續在日常中體會言語的本質。</p>
-</div>
-</div>
-<div class="w-full md:w-64 flex flex-col gap-1.5">
-<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant font-medium">
-<span>當前目標進度</span>
-<span>45 / 120 (38%)</span>
-</div>
-<div class="w-full bg-surface-container-high rounded-full h-2.5 overflow-hidden">
-<div class="bg-primary-container h-full rounded-full transition-all duration-500" style="width: 38%"></div>
-</div>
-</div>
-</div>
-<!-- 2-Column Balanced Desktop Layout -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-<!-- ================= LEFT / MAIN COLUMN (7 cols) ================= -->
-<section class="lg:col-span-7 flex flex-col gap-8">
-<!-- Active Featured Flashcard: 'pona' -->
-<article class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-7 shadow-sm transition hover:shadow-md relative overflow-hidden">
-<!-- Subtle Japanese Zen stamp watermark in background -->
-<div class="absolute -right-6 -bottom-6 w-40 h-40 rounded-full border-4 border-primary/5 flex items-center justify-center select-none pointer-events-none">
-<span class="text-7xl font-bold text-primary/5">善</span>
-</div>
-<!-- Flashcard Header Bar -->
-<div class="flex items-center justify-between border-b border-outline-variant/20 pb-4 mb-6">
-<div class="flex items-center gap-2.5">
-<span class="px-3 py-1 rounded-full bg-surface-container text-primary font-label-md text-label-md font-semibold border border-outline-variant/30">
-                ⭐ 今日核心推薦
-              </span>
-<span class="text-xs text-on-surface-variant font-medium">詞號 #001 · 常用度 S 級</span>
-</div>
-<div class="flex items-center gap-2">
-<button class="p-2 rounded-full hover:bg-surface-container text-on-surface-variant transition" title="朗讀發音">
-<span class="material-symbols-outlined text-xl">volume_up</span>
-</button>
-<button class="p-2 rounded-full hover:bg-surface-container text-on-surface-variant transition" title="收藏單字">
-<span class="material-symbols-outlined text-xl">bookmark</span>
-</button>
-</div>
-</div>
-<!-- Hero Glyph & Word Title -->
-<div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-7">
-<!-- Sitelen Pona Glyph Display Badge -->
-<div class="w-28 h-28 rounded-xl bg-surface-container-low border border-outline-variant/40 flex flex-col items-center justify-center p-3 text-center shadow-inner relative group">
-<!-- Handcrafted clean vector representation of Toki Pona glyph 'pona' (smile / good) -->
-<svg aria-label="Sitelen Pona Glyph for 'pona'" class="w-16 h-16 stroke-current text-primary fill-none stroke-[6] stroke-linecap-round stroke-linejoin-round" viewbox="0 0 100 100">
-<!-- Open circle smile shape representing pona -->
-<circle class="opacity-90" cx="50" cy="50" r="38" stroke-dasharray="200" stroke-dashoffset="35"></circle>
-<path d="M 32 52 Q 50 72 68 52" stroke-width="6"></path>
-<circle cx="36" cy="38" fill="currentColor" r="3.5" stroke="none"></circle>
-<circle cx="64" cy="38" fill="currentColor" r="3.5" stroke="none"></circle>
-</svg>
-<span class="font-label-sm text-label-sm text-on-surface-variant mt-1">Sitelen Pona</span>
-</div>
-<!-- Phonetics & Translations -->
-<div class="flex-1 text-center sm:text-left">
-<div class="flex items-center justify-center sm:justify-start gap-3 flex-wrap">
-<h2 class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">pona</h2>
-<span class="font-label-md text-label-md text-on-surface-variant">/po.na/</span>
-<span class="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-label-md text-label-md font-bold">
-                  adj. / n. / v.
-                </span>
-</div>
-<p class="font-title-md text-title-md text-secondary font-semibold mt-1.5">
-                好、善、簡單、正面、修理
-              </p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2 leading-relaxed">
-                哲學核心：返璞歸真、無造作的和諧。任何帶來秩序、舒適、無害或喜悅的純粹狀態。
-              </p>
-</div>
-</div>
-<!-- Sentence Example Block with word breakdown -->
-<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/30 mb-6">
-<div class="flex items-center justify-between mb-2">
-<span class="font-label-sm text-label-sm text-primary font-bold tracking-wide uppercase">情境範例 · Sentence Example</span>
-<button class="flex items-center gap-1 text-xs text-primary font-medium hover:underline">
-<span class="material-symbols-outlined text-sm">volume_up</span>
-<span>聽整句</span>
-</button>
-</div>
-<div class="text-lg font-bold text-on-surface flex items-center gap-2 flex-wrap">
-<span class="border-b border-dashed border-primary pb-0.5 cursor-pointer hover:text-primary" title="你 / 你的">sina</span>
-<span class="border-b border-dashed border-primary pb-0.5 cursor-pointer hover:text-primary" title="改善 / 修復">pona</span>
-<span class="px-1.5 py-0.5 bg-outline-variant/30 rounded text-xs font-semibold text-on-surface-variant" title="賓語前置標記">e</span>
-<span class="border-b border-dashed border-primary pb-0.5 cursor-pointer hover:text-primary" title="事物 / 東西">ijo.</span>
-</div>
-<!-- Subtitle and Gloss -->
-<div class="mt-2 text-sm text-on-surface-variant flex flex-col gap-1">
-<p class="font-medium text-on-surface">「你把東西修好了」或「你讓事物變好了」</p>
-<p class="text-xs text-outline font-label-md">逐詞拆解: sina (你) + pona (使...好) + e (受詞標記) + ijo (事物)</p>
-</div>
-</div>
-<!-- Flashcard Action Buttons -->
-<div class="flex flex-wrap items-center justify-between gap-3 pt-2">
-<div class="flex items-center gap-2">
-<!-- Primary Stamp button -->
-<button class="px-6 py-2.5 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg font-bold shadow hover:bg-primary transition active:translate-y-0.5 flex items-center gap-2">
-<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-<span>標記已掌握 (Mastered)</span>
-</button>
-<!-- Subtle Linen Outline button -->
-<button class="px-4 py-2.5 rounded-full border border-outline-variant/50 text-on-surface-variant font-label-lg text-label-lg hover:bg-surface-container transition flex items-center gap-1.5">
-<span class="material-symbols-outlined text-base">add</span>
-<span>加入生詞本</span>
-</button>
-</div>
-<!-- Next Word -->
-<button class="px-4 py-2.5 rounded-full bg-surface-container text-primary font-label-lg text-label-lg font-bold hover:bg-surface-container-high transition flex items-center gap-1">
-<span>下一個詞彙</span>
-<span class="material-symbols-outlined text-base">arrow_forward</span>
-</button>
-</div>
-</article>
-<!-- Vocabulary Explorer Carousel / Grid -->
-<div class="flex flex-col gap-4">
-<div class="flex items-center justify-between">
-<div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">推薦關聯詞彙庫</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant">點選卡片即可快速展開深入解析與例句</p>
-</div>
-<a class="text-primary font-label-md text-label-md font-semibold hover:underline flex items-center gap-0.5" href="#all-words">
-<span>查看全部 120 詞</span>
-<span class="material-symbols-outlined text-sm">arrow_forward</span>
-</a>
-</div>
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-<!-- Mini Card: toki -->
-<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/30 hover:border-primary/50 transition cursor-pointer group shadow-sm flex flex-col justify-between">
-<div>
-<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary mb-3 group-hover:scale-105 transition-transform">
-<span class="text-xl">💬</span>
-</div>
-<div class="flex items-baseline justify-between">
-<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold group-hover:text-primary transition-colors">toki</h4>
-<span class="text-[10px] text-outline font-semibold">n./v.</span>
-</div>
-<p class="text-xs text-on-surface-variant font-medium mt-1">話 / 言語 / 溝通</p>
-</div>
-<div class="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[11px] text-outline">
-<span>例: toki pona</span>
-<span class="material-symbols-outlined text-xs">volume_up</span>
-</div>
-</div>
-<!-- Mini Card: moku -->
-<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/30 hover:border-primary/50 transition cursor-pointer group shadow-sm flex flex-col justify-between">
-<div>
-<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary mb-3 group-hover:scale-105 transition-transform">
-<span class="text-xl">🍲</span>
-</div>
-<div class="flex items-baseline justify-between">
-<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold group-hover:text-primary transition-colors">moku</h4>
-<span class="text-[10px] text-outline font-semibold">v./n.</span>
-</div>
-<p class="text-xs text-on-surface-variant font-medium mt-1">吃 / 食物 / 喝</p>
-</div>
-<div class="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[11px] text-outline">
-<span>例: moku pona</span>
-<span class="material-symbols-outlined text-xs">volume_up</span>
-</div>
-</div>
-<!-- Mini Card: olin -->
-<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/30 hover:border-primary/50 transition cursor-pointer group shadow-sm flex flex-col justify-between">
-<div>
-<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-error mb-3 group-hover:scale-105 transition-transform">
-<span class="text-xl">🤍</span>
-</div>
-<div class="flex items-baseline justify-between">
-<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold group-hover:text-primary transition-colors">olin</h4>
-<span class="text-[10px] text-outline font-semibold">v./n.</span>
-</div>
-<p class="text-xs text-on-surface-variant font-medium mt-1">愛 / 喜愛 / 關懷</p>
-</div>
-<div class="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[11px] text-outline">
-<span>例: mi olin e sina</span>
-<span class="material-symbols-outlined text-xs">volume_up</span>
-</div>
-</div>
-<!-- Mini Card: kili -->
-<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/30 hover:border-primary/50 transition cursor-pointer group shadow-sm flex flex-col justify-between">
-<div>
-<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary mb-3 group-hover:scale-105 transition-transform">
-<span class="text-xl">🍎</span>
-</div>
-<div class="flex items-baseline justify-between">
-<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold group-hover:text-primary transition-colors">kili</h4>
-<span class="text-[10px] text-outline font-semibold">n.</span>
-</div>
-<p class="text-xs text-on-surface-variant font-medium mt-1">水果 / 果實 / 蔬果</p>
-</div>
-<div class="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[11px] text-outline">
-<span>例: kili suwi</span>
-<span class="material-symbols-outlined text-xs">volume_up</span>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- ================= RIGHT COLUMN (5 cols) ================= -->
-<section class="lg:col-span-5 flex flex-col gap-8">
-<!-- CARD 1: Interactive Quiz Arena (測驗競技場) -->
-<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-6 shadow-sm">
-<!-- Mode Pills -->
-<div class="flex items-center gap-1.5 overflow-x-auto pb-3 border-b border-outline-variant/20">
-<span class="px-2.5 py-1 rounded-full bg-primary text-on-primary text-xs font-semibold whitespace-nowrap">單選測驗</span>
-<span class="px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant text-xs font-medium hover:bg-surface-container-high transition cursor-pointer whitespace-nowrap">聽力測驗 🎧</span>
-<span class="px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant text-xs font-medium hover:bg-surface-container-high transition cursor-pointer whitespace-nowrap">填空挑戰 ✍️</span>
-<span class="px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant text-xs font-semibold whitespace-nowrap">錯題複習 (2)</span>
-</div>
-<!-- Question Progress & Title -->
-<div class="mt-4 mb-3 flex items-center justify-between">
-<span class="font-label-md text-label-md text-primary font-bold">問題 04 / 10</span>
-<span class="text-xs text-outline">難度: 初級 (lili)</span>
-</div>
-<!-- Question Stem -->
-<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/30 mb-5">
-<p class="text-xs text-on-surface-variant mb-1 font-medium">請選擇這句話的正確中文含義：</p>
-<p class="text-lg font-bold text-on-surface tracking-wide flex items-center gap-2">
-<span>「mi moku e kili pona」</span>
-<button class="text-primary hover:text-primary-container" title="播放題目語音">
-<span class="material-symbols-outlined text-lg">volume_up</span>
-</button>
-</p>
-</div>
-<!-- 4 Interactive Multiple-Choice Options -->
-<div class="flex flex-col gap-2.5 mb-5">
-<!-- Option A (Correct Selected State) -->
-<label class="flex items-center gap-3 p-3.5 rounded-xl border-2 border-primary bg-primary/5 cursor-pointer transition select-none">
-<input checked="" class="w-4 h-4 text-primary focus:ring-primary" name="quiz_q4" type="radio"/>
-<div class="flex-1">
-<span class="text-sm font-bold text-on-surface">我吃了美味的水果</span>
-<span class="block text-[11px] text-primary font-medium mt-0.5">✓ 正確！moku = 吃，kili pona = 好的果實</span>
-</div>
-</label>
-<!-- Option B -->
-<label class="flex items-center gap-3 p-3.5 rounded-xl border border-outline-variant/40 bg-surface-container-lowest hover:bg-surface-container/50 cursor-pointer transition select-none">
-<input class="w-4 h-4 text-primary focus:ring-primary" name="quiz_q4" type="radio"/>
-<div class="flex-1">
-<span class="text-sm font-medium text-on-surface">我買了一棵大樹</span>
-</div>
-</label>
-<!-- Option C -->
-<label class="flex items-center gap-3 p-3.5 rounded-xl border border-outline-variant/40 bg-surface-container-lowest hover:bg-surface-container/50 cursor-pointer transition select-none">
-<input class="w-4 h-4 text-primary focus:ring-primary" name="quiz_q4" type="radio"/>
-<div class="flex-1">
-<span class="text-sm font-medium text-on-surface">你喜歡新鮮蔬菜嗎？</span>
-</div>
-</label>
-<!-- Option D -->
-<label class="flex items-center gap-3 p-3.5 rounded-xl border border-outline-variant/40 bg-surface-container-lowest hover:bg-surface-container/50 cursor-pointer transition select-none">
-<input class="w-4 h-4 text-primary focus:ring-primary" name="quiz_q4" type="radio"/>
-<div class="flex-1">
-<span class="text-sm font-medium text-on-surface">我們正在做飯</span>
-</div>
-</label>
-</div>
-<!-- Clue / Tip Badge -->
-<div class="p-3 rounded-lg bg-surface-container border border-outline-variant/30 flex items-start gap-2 text-xs text-on-surface-variant mb-5">
-<span class="text-sm">💡</span>
-<p><strong>提示:</strong> <code class="text-primary font-semibold">moku</code> (吃/進食), <code class="text-primary font-semibold">kili</code> (果實/蔬果), <code class="text-primary font-semibold">pona</code> (好/美味)</p>
-</div>
-<!-- Action bar -->
-<div class="flex items-center justify-between">
-<button class="text-xs text-outline hover:text-on-surface underline font-medium">跳過這題</button>
-<button class="px-6 py-2 rounded-full bg-secondary text-on-secondary font-label-md text-label-md font-bold shadow hover:opacity-95 transition active:scale-95 flex items-center gap-1">
-<span>下一題 (05/10)</span>
-<span class="material-symbols-outlined text-sm">navigate_next</span>
-</button>
-</div>
-</div>
-<!-- CARD 2: Scenario Dialogue Practice (情境對話實戰) -->
-<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-6 shadow-sm">
-<div class="flex items-center justify-between mb-4">
-<div class="flex items-center gap-2">
-<span class="w-2.5 h-2.5 rounded-full bg-primary animate-ping"></span>
-<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">情境對話實戰</h3>
-</div>
-<span class="px-2.5 py-1 rounded-full bg-surface-container text-xs font-medium text-on-surface-variant">
-              初次見面 (kama sona)
-            </span>
-</div>
-<!-- Chat bubble sandbox -->
-<div class="space-y-4 bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 mb-4 max-h-[360px] overflow-y-auto">
-<!-- Message 1: jan Lisa -->
-<div class="flex items-start gap-3">
-<div class="w-8 h-8 rounded-full bg-primary-fixed text-primary font-bold flex items-center justify-center text-xs flex-shrink-0 shadow-sm">
-                L
-              </div>
-<div class="flex-1">
-<div class="flex items-center gap-2 mb-1">
-<span class="text-xs font-bold text-on-surface">jan Lisa</span>
-<span class="text-[10px] text-outline">09:42</span>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl rounded-tl-none border border-outline-variant/30 text-sm shadow-sm inline-block">
-<p class="font-semibold text-on-surface flex items-center gap-1.5">
-<span>toki! sina seme?</span>
-<button class="text-outline hover:text-primary"><span class="material-symbols-outlined text-xs">volume_up</span></button>
-</p>
-<p class="text-xs text-on-surface-variant mt-0.5">「嗨！你是誰？」 / 「你好嗎？」</p>
-</div>
-</div>
-</div>
-<!-- Message 2: jan Ken (User / Partner) -->
-<div class="flex items-start gap-3 flex-row-reverse">
-<div class="w-8 h-8 rounded-full bg-secondary-fixed text-secondary font-bold flex items-center justify-center text-xs flex-shrink-0 shadow-sm">
-                K
-              </div>
-<div class="flex-1 text-right">
-<div class="flex items-center justify-end gap-2 mb-1">
-<span class="text-[10px] text-outline">09:43</span>
-<span class="text-xs font-bold text-on-surface">jan Ken</span>
-</div>
-<div class="bg-primary-container text-on-primary p-3 rounded-xl rounded-tr-none text-sm shadow-sm inline-block text-left">
-<p class="font-semibold flex items-center gap-1.5">
-<span>toki! mi pona. sina pona ala pona?</span>
-<button class="text-on-primary/80 hover:text-on-primary"><span class="material-symbols-outlined text-xs">volume_up</span></button>
-</p>
-<p class="text-xs text-on-primary/80 mt-0.5">「你好！我很好。你呢？（你好不好？）」</p>
-</div>
-</div>
-</div>
-<!-- Message 3: jan Lisa -->
-<div class="flex items-start gap-3">
-<div class="w-8 h-8 rounded-full bg-primary-fixed text-primary font-bold flex items-center justify-center text-xs flex-shrink-0 shadow-sm">
-                L
-              </div>
-<div class="flex-1">
-<div class="flex items-center gap-2 mb-1">
-<span class="text-xs font-bold text-on-surface">jan Lisa</span>
-<span class="text-[10px] text-outline">09:44</span>
-</div>
-<div class="bg-surface-container-lowest p-3 rounded-xl rounded-tl-none border border-outline-variant/30 text-sm shadow-sm inline-block">
-<p class="font-semibold text-on-surface flex items-center gap-1.5">
-<span>mi pona kin! mi wile moku e telo.</span>
-<button class="text-outline hover:text-primary"><span class="material-symbols-outlined text-xs">volume_up</span></button>
-</p>
-<p class="text-xs text-on-surface-variant mt-0.5">「我也很好！我想喝水。」</p>
-</div>
-</div>
-</div>
-</div>
-<!-- Dialogue Tooltip & Practice CTA -->
-<div class="flex items-center justify-between gap-3 pt-1">
-<span class="text-xs text-outline flex items-center gap-1">
-<span class="material-symbols-outlined text-sm text-primary">headphones</span>
-<span>支援全段語音慢速播放</span>
-</span>
-<button class="px-4 py-2 rounded-full border border-primary text-primary font-label-md text-label-md font-bold hover:bg-primary hover:text-on-primary transition flex items-center gap-1.5">
-<span class="material-symbols-outlined text-sm">record_voice_over</span>
-<span>開啟逐句跟讀練習</span>
-</button>
-</div>
-</div>
-</section>
-</div>
-</main>
-<!-- ================= FOOTER (Shared Component) ================= -->
-<footer class="w-full mt-auto bg-surface-container-low dark:bg-inverse-surface border-t border-outline-variant/25 dark:border-outline-variant/15 flat no shadows">
-<div class="max-w-7xl mx-auto px-8 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
-<!-- Brand & Copyright -->
-<div class="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
-<span class="font-headline-sm text-headline-sm font-semibold text-primary dark:text-inverse-primary">Toki Pona App</span>
-<span class="hidden sm:inline text-outline">·</span>
-<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline">
-          © 2025 Toki Pona App. lipu pi toki pona. The simple life of good things.
-        </p>
-</div>
-<!-- Links -->
-<div class="flex flex-wrap items-center justify-center gap-6 font-label-md text-label-md">
-<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#about">關於道本語</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#dictionary">象形文字典 (Sitelen Pona)</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#community">社群 (Kulupu)</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#privacy">隱私權與條款</a>
-</div>
-</div>
-</footer>
+<body>
+    <div id="root"></div>
 
-  <script src="./data.js"></script>
-  <script>
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration failed:', err));
-      });
-    }
+    <script type="text/babel">
+        const { useState, useMemo, useEffect } = React;
 
-    // Web Speech API for Toki Pona
-    function speakText(text) {
-      if (!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'eo'; // Esperanto or Latin provides close phonetics
-      utterance.rate = 0.9;
-      window.speechSynthesis.speak(utterance);
-    }
+        // --- 圖示組件封裝 ---
+        const IconWrapper = ({ iconClass, size = 20, className = "" }) => (
+            <i className={`${iconClass} ${className}`} style={{ fontSize: size, verticalAlign: 'middle', display: 'inline-block' }}></i>
+        );
 
-    // Toggle Sitelen Pona
-    let sitelenPonaActive = true;
-    function toggleSitelenPona() {
-      sitelenPonaActive = !sitelenPonaActive;
-      document.querySelectorAll('.sitelen-pona').forEach(el => {
-        el.style.display = sitelenPonaActive ? '' : 'none';
-      });
-    }
+        // --- 圖示對應表與輔助函式 ---
+        const ICONS_MAP = {
+          Book: (p) => <IconWrapper iconClass="ph-bold ph-book" {...p} />,
+          Users: (p) => <IconWrapper iconClass="ph-bold ph-users" {...p} />,
+          Layers: (p) => <IconWrapper iconClass="ph-bold ph-stack" {...p} />,
+          Clock: (p) => <IconWrapper iconClass="ph-bold ph-clock" {...p} />,
+          Briefcase: (p) => <IconWrapper iconClass="ph-bold ph-briefcase" {...p} />,
+          Activity: (p) => <IconWrapper iconClass="ph-bold ph-activity" {...p} />,
+          Home: (p) => <IconWrapper iconClass="ph-bold ph-house" {...p} />,
+          Globe: (p) => <IconWrapper iconClass="ph-bold ph-globe" {...p} />,
+          Feather: (p) => <IconWrapper iconClass="ph-bold ph-feather" {...p} />,
+          Palette: (p) => <IconWrapper iconClass="ph-bold ph-palette" {...p} />,
+          Zap: (p) => <IconWrapper iconClass="ph-bold ph-lightning" {...p} />,
+          PenTool: (p) => <IconWrapper iconClass="ph-bold ph-pen-nib" {...p} />,
+          FileText: (p) => <IconWrapper iconClass="ph-bold ph-file-text" {...p} />,
+          MessageSquare: (p) => <IconWrapper iconClass="ph-bold ph-chat-circle" {...p} />
+        };
 
-    // Attach speech to all audio speaker buttons
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('button').forEach(btn => {
-        const text = btn.innerText || btn.textContent;
-        if (text.includes('volume_up') || btn.querySelector('.material-symbols-outlined')?.textContent === 'volume_up') {
-          btn.addEventListener('click', (e) => {
+        const renderIcon = (iconKey, size = 20) => {
+          const IconComponent = ICONS_MAP[iconKey] || ICONS_MAP.Book;
+          return <IconComponent size={size} />;
+        };
+
+        const Book = (p) => <IconWrapper iconClass="ph-bold ph-book" {...p} />;
+        const MessageSquare = (p) => <IconWrapper iconClass="ph-bold ph-chat-circle" {...p} />;
+        const Feather = (p) => <IconWrapper iconClass="ph-bold ph-feather" {...p} />;
+        const Sun = (p) => <IconWrapper iconClass="ph-bold ph-sun" {...p} />;
+        const Home = (p) => <IconWrapper iconClass="ph-bold ph-house" {...p} />;
+        const Users = (p) => <IconWrapper iconClass="ph-bold ph-users" {...p} />;
+        const Activity = (p) => <IconWrapper iconClass="ph-bold ph-activity" {...p} />;
+        const Layers = (p) => <IconWrapper iconClass="ph-bold ph-stack" {...p} />;
+        const Volume2 = (p) => <IconWrapper iconClass="ph-bold ph-speaker-high" {...p} />;
+        const Search = (p) => <IconWrapper iconClass="ph-bold ph-magnifying-glass" {...p} />;
+        const ChevronRight = (p) => <IconWrapper iconClass="ph-bold ph-caret-right" {...p} />;
+        const Hash = (p) => <IconWrapper iconClass="ph-bold ph-hash" {...p} />;
+        const Palette = (p) => <IconWrapper iconClass="ph-bold ph-palette" {...p} />;
+        const Zap = (p) => <IconWrapper iconClass="ph-bold ph-lightning" {...p} />;
+        const Globe = (p) => <IconWrapper iconClass="ph-bold ph-globe" {...p} />;
+        const Briefcase = (p) => <IconWrapper iconClass="ph-bold ph-briefcase" {...p} />;
+        const Clock = (p) => <IconWrapper iconClass="ph-bold ph-clock" {...p} />;
+        const MapPin = (p) => <IconWrapper iconClass="ph-bold ph-map-pin" {...p} />;
+        const HelpCircle = (p) => <IconWrapper iconClass="ph-bold ph-question" {...p} />;
+        const Menu = (p) => <IconWrapper iconClass="ph-bold ph-list" {...p} />;
+        const X = (p) => <IconWrapper iconClass="ph-bold ph-x" {...p} />;
+        const PenTool = (p) => <IconWrapper iconClass="ph-bold ph-pen-nib" {...p} />;
+        const FileText = (p) => <IconWrapper iconClass="ph-bold ph-file-text" {...p} />;
+        const Check = (p) => <IconWrapper iconClass="ph-bold ph-check" {...p} />;
+        const Star = (p) => <IconWrapper iconClass="ph-bold ph-star" {...p} />;
+        const Trophy = (p) => <IconWrapper iconClass="ph-bold ph-trophy" {...p} />;
+        const ArrowClockwise = (p) => <IconWrapper iconClass="ph-bold ph-arrow-clockwise" {...p} />;
+        const Sliders = (p) => <IconWrapper iconClass="ph-bold ph-sliders" {...p} />;
+
+        // --- 語音輔助 ---
+        const speak = (text) => {
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const cleanText = text.replace(/Set \d+ - Level \d+: /g, '').replace(/Level \d+: /g, '').replace(/\(.*?\):/g, '');
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.rate = 0.9; 
+            utterance.pitch = 1.0;
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v => 
+              v.lang.includes('ja') || v.lang.includes('es') || v.lang.includes('it')
+            );
+            if (preferredVoice) utterance.voice = preferredVoice;
+            window.speechSynthesis.saveInstance && window.speechSynthesis.saveInstance();
+            window.speechSynthesis.speak(utterance);
+          }
+        };
+
+        const App = () => {
+          const [selectedCategory, setSelectedCategory] = useState(window.VOCAB_DATA[0]);
+          const [searchTerm, setSearchTerm] = useState('');
+          const [activeTab, setActiveTab] = useState('learn'); // 'learn', 'all', 'quiz'
+          const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+          // 語言設定 ('zh' | 'en' | 'ja')
+          const [lang, setLang] = useState(() => {
+            try {
+              return localStorage.getItem('toki_pona_lang') || 'zh';
+            } catch (e) {
+              return 'zh';
+            }
+          });
+
+          useEffect(() => {
+            try {
+              localStorage.setItem('toki_pona_lang', lang);
+            } catch (e) {}
+          }, [lang]);
+
+          // Sitelen Pona 象形文字開關
+          const [showSitelen, setShowSitelen] = useState(() => {
+            try {
+              return localStorage.getItem('toki_pona_sitelen') === 'true';
+            } catch (e) {
+              return false;
+            }
+          });
+
+          useEffect(() => {
+            try {
+              localStorage.setItem('toki_pona_sitelen', showSitelen);
+            } catch (e) {}
+          }, [showSitelen]);
+
+          const getMeaning = (item) => {
+            if (!item) return '';
+            if (lang === 'en') return item.en || item.cn;
+            if (lang === 'ja') return item.ja || item.cn;
+            return item.cn;
+          };
+
+          // 2. 持久化學習進度 (localStorage)
+          const [masteredWords, setMasteredWords] = useState(() => {
+            try {
+              const saved = localStorage.getItem('toki_pona_mastered');
+              return saved ? JSON.parse(saved) : {};
+            } catch (e) {
+              return {};
+            }
+          });
+
+          // 篩選狀態：'all' | 'mastered' | 'unmastered'
+          const [statusFilter, setStatusFilter] = useState('all');
+
+          useEffect(() => {
+            try {
+              localStorage.setItem('toki_pona_mastered', JSON.stringify(masteredWords));
+            } catch (e) {}
+          }, [masteredWords]);
+
+          const toggleMastered = (wordKey, e) => {
             e.stopPropagation();
-            // Look for closest toki pona word
-            const parentCard = btn.closest('div');
-            const wordEl = parentCard?.querySelector('h3, h4, span.font-bold, span.glyph-font');
-            const word = wordEl ? wordEl.textContent.trim() : 'pona';
-            speakText(word);
+            setMasteredWords(prev => ({
+              ...prev,
+              [wordKey]: !prev[wordKey]
+            }));
+          };
+
+          // 錯題本持久化 (localStorage)
+          const [mistakes, setMistakes] = useState(() => {
+            try {
+              const saved = localStorage.getItem('toki_pona_mistakes');
+              return saved ? JSON.parse(saved) : {};
+            } catch (e) {
+              return {};
+            }
+          });
+
+          // 單字自訂筆記持久化 (localStorage: toki_pona_notes)
+          const [notes, setNotes] = useState(() => {
+            try {
+              const saved = localStorage.getItem('toki_pona_notes');
+              return saved ? JSON.parse(saved) : {};
+            } catch (e) {
+              return {};
+            }
+          });
+
+          useEffect(() => {
+            try {
+              localStorage.setItem('toki_pona_notes', JSON.stringify(notes));
+            } catch (e) {}
+          }, [notes]);
+
+          // 正在編輯筆記的單字 key
+          const [editingNoteKey, setEditingNoteKey] = useState(null);
+          const [noteInputText, setNoteInputText] = useState('');
+
+          const saveNote = (wordKey, text) => {
+            setNotes(prev => {
+              const next = { ...prev };
+              if (!text || !text.trim()) {
+                delete next[wordKey];
+              } else {
+                next[wordKey] = text.trim();
+              }
+              return next;
+            });
+            setEditingNoteKey(null);
+          };
+
+          const notedCount = useMemo(() => {
+            return Object.values(notes).filter(n => n && n.trim().length > 0).length;
+          }, [notes]);
+
+          useEffect(() => {
+            try {
+              localStorage.setItem('toki_pona_mistakes', JSON.stringify(mistakes));
+            } catch (e) {}
+          }, [mistakes]);
+
+          const removeMistake = (wordKey, e) => {
+            if (e) e.stopPropagation();
+            setMistakes(prev => {
+              const next = { ...prev };
+              delete next[wordKey];
+              return next;
+            });
+          };
+
+          const clearAllMistakes = () => {
+            if (window.confirm('確定要清空整本錯題本嗎？')) {
+              setMistakes({});
+            }
+          };
+
+          const mistakesList = useMemo(() => Object.values(mistakes), [mistakes]);
+
+          // 計算總單字與已掌握數
+          const allWordsWithKey = useMemo(() => {
+            const list = [];
+            window.VOCAB_DATA.forEach(cat => {
+              cat.words.forEach(w => {
+                const key = `${cat.id}___${w.tp}`;
+                list.push({ ...w, categoryId: cat.id, categoryTitle: cat.title, key });
+              });
+            });
+            return list;
+          }, []);
+
+          const totalWordsCount = allWordsWithKey.length;
+          const masteredCount = useMemo(() => {
+            return allWordsWithKey.filter(w => masteredWords[w.key]).length;
+          }, [allWordsWithKey, masteredWords]);
+
+          const masteryPercentage = totalWordsCount > 0 ? Math.round((masteredCount / totalWordsCount) * 100) : 0;
+
+          // 根據 activeTab 與 statusFilter 過濾單字
+          const filteredWords = useMemo(() => {
+            let list = [];
+            if (activeTab === 'learn') {
+              list = selectedCategory.words.map(w => {
+                const key = `${selectedCategory.id}___${w.tp}`;
+                return { ...w, categoryId: selectedCategory.id, key };
+              });
+            } else if (activeTab === 'all') {
+              list = allWordsWithKey;
+              if (searchTerm) {
+                const lowerTerm = searchTerm.toLowerCase();
+                list = list.filter(w => 
+                  w.tp.toLowerCase().includes(lowerTerm) || 
+                  w.cn.includes(searchTerm) ||
+                  (notes[w.key] && notes[w.key].toLowerCase().includes(lowerTerm))
+                );
+              }
+            }
+
+            if (statusFilter === 'mastered') {
+              list = list.filter(w => masteredWords[w.key]);
+            } else if (statusFilter === 'unmastered') {
+              list = list.filter(w => !masteredWords[w.key]);
+            } else if (statusFilter === 'noted') {
+              list = list.filter(w => notes[w.key] && notes[w.key].trim().length > 0);
+            }
+
+            return list;
+          }, [selectedCategory, searchTerm, activeTab, allWordsWithKey, statusFilter, masteredWords, notes]);
+
+
+          // --- 3. 互動式測驗模式 (Quiz Mode) ---
+          const [quizState, setQuizState] = useState('start'); // 'start' | 'playing' | 'result'
+          const [quizQuestions, setQuizQuestions] = useState([]);
+          const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
+          const [selectedOption, setSelectedOption] = useState(null);
+          const [isAnswered, setIsAnswered] = useState(false);
+          const [quizScore, setQuizScore] = useState(0);
+          const [wrongQuestions, setWrongQuestions] = useState([]);
+          const [selectedQuizType, setSelectedQuizType] = useState('mixed'); // 'mixed' | 'vocab' | 'listening' | 'cloze' | 'sitelen'
+
+          // 開始新測驗
+          const startQuiz = (sourceList = allWordsWithKey, mode = selectedQuizType) => {
+            let questions = [];
+
+            if (mode === 'cloze') {
+              const allSentences = [];
+              window.VOCAB_DATA.forEach(cat => {
+                if (cat.sentences) {
+                  cat.sentences.forEach(s => {
+                    allSentences.push({ ...s, categoryTitle: cat.title });
+                  });
+                }
+              });
+
+              if (allSentences.length < 4) {
+                alert('例句數量不足，無法開始克漏字測驗！');
+                return;
+              }
+
+              const shuffledSents = [...allSentences].sort(() => 0.5 - Math.random());
+              const chosenSents = shuffledSents.slice(0, Math.min(10, shuffledSents.length));
+
+              questions = chosenSents.map(sent => {
+                const rawTokens = sent.tp.replace(/[.,?!]/g, '').split(' ');
+                const vocabTpSet = new Set(allWordsWithKey.map(w => w.tp.toLowerCase()));
+                const candidateTokens = rawTokens.filter(t => vocabTpSet.has(t.toLowerCase()));
+                const targetToken = candidateTokens.length > 0 
+                  ? candidateTokens[Math.floor(Math.random() * candidateTokens.length)]
+                  : rawTokens[0];
+
+                const maskedTp = sent.tp.replace(new RegExp(`\\b${targetToken}\\b`, 'i'), '_____');
+
+                const otherWords = allWordsWithKey.filter(w => w.tp.toLowerCase() !== targetToken.toLowerCase());
+                const shuffledOthers = [...otherWords].sort(() => 0.5 - Math.random());
+                const wrongOptions = shuffledOthers.slice(0, 3).map(w => w.tp);
+                const options = [targetToken, ...wrongOptions].sort(() => 0.5 - Math.random());
+
+                return {
+                  type: 'cloze',
+                  questionText: maskedTp,
+                  correctAnswer: targetToken,
+                  options,
+                  sentenceCn: sent.cn,
+                  originalTp: sent.tp,
+                  item: { tp: targetToken, cn: sent.cn, type: '例句克漏字' }
+                };
+              });
+            } else {
+              if (!sourceList || sourceList.length < 4) {
+                alert('單字數量不足，無法開始測驗！');
+                return;
+              }
+              const shuffled = [...sourceList].sort(() => 0.5 - Math.random());
+              const selectedCount = Math.min(10, shuffled.length);
+              const chosen = shuffled.slice(0, selectedCount);
+
+              questions = chosen.map(item => {
+                let qType = mode;
+                if (mode === 'mixed') {
+                  const types = ['tp_to_cn', 'cn_to_tp', 'listening', 'sitelen_to_tp', 'cn_to_sitelen', 'listening_to_sitelen'];
+                  qType = types[Math.floor(Math.random() * types.length)];
+                } else if (mode === 'sitelen') {
+                  const types = ['sitelen_to_tp', 'cn_to_sitelen', 'listening_to_sitelen'];
+                  qType = types[Math.floor(Math.random() * types.length)];
+                }
+
+                let direction = 'tp_to_cn';
+                if (qType === 'cn_to_tp') direction = 'cn_to_tp';
+                if (qType === 'listening') direction = 'listening';
+                if (qType === 'sitelen_to_tp') direction = 'sitelen_to_tp';
+                if (qType === 'cn_to_sitelen') direction = 'cn_to_sitelen';
+                if (qType === 'listening_to_sitelen') direction = 'listening_to_sitelen';
+
+                const pureTp = item.tp.replace(/\s*\(.*?\)/, '').toLowerCase();
+                const itemMeaning = getMeaning(item);
+
+                let correctAnswer = itemMeaning;
+                if (direction === 'cn_to_tp' || direction === 'listening' || direction === 'sitelen_to_tp') {
+                  correctAnswer = item.tp;
+                } else if (direction === 'cn_to_sitelen' || direction === 'listening_to_sitelen') {
+                  correctAnswer = pureTp;
+                }
+                
+                const otherItems = allWordsWithKey.filter(w => w.tp !== item.tp);
+                const shuffledOthers = [...otherItems].sort(() => 0.5 - Math.random());
+                const wrongOptions = shuffledOthers.slice(0, 3).map(w => {
+                  if (direction === 'cn_to_tp' || direction === 'listening' || direction === 'sitelen_to_tp') {
+                    return w.tp;
+                  }
+                  if (direction === 'cn_to_sitelen' || direction === 'listening_to_sitelen') {
+                    return w.tp.replace(/\s*\(.*?\)/, '').toLowerCase();
+                  }
+                  return getMeaning(w);
+                });
+                const options = [correctAnswer, ...wrongOptions].sort(() => 0.5 - Math.random());
+
+                let questionText = item.tp;
+                if (direction === 'cn_to_tp' || direction === 'cn_to_sitelen') {
+                  questionText = itemMeaning;
+                } else if (direction === 'sitelen_to_tp') {
+                  questionText = pureTp;
+                }
+
+                return {
+                  type: direction,
+                  questionText,
+                  correctAnswer,
+                  options,
+                  item
+                };
+              });
+            }
+
+            setQuizQuestions(questions);
+            setCurrentQuizIndex(0);
+            setSelectedOption(null);
+            setIsAnswered(false);
+            setQuizScore(0);
+            setWrongQuestions([]);
+            setQuizState('playing');
+
+            if (questions.length > 0 && (questions[0].type === 'listening' || questions[0].type === 'listening_to_sitelen')) {
+              setTimeout(() => speak(questions[0].item.tp), 500);
+            }
+          };
+
+          const handleAnswerSelect = (option) => {
+            if (isAnswered) return;
+            setSelectedOption(option);
+            setIsAnswered(true);
+
+            const currentQ = quizQuestions[currentQuizIndex];
+            const isCorrect = option === currentQ.correctAnswer;
+            if (isCorrect) {
+              setQuizScore(prev => prev + 1);
+            } else {
+              setWrongQuestions(prev => [...prev, currentQ]);
+              if (currentQ.item && currentQ.item.tp) {
+                const wordKey = currentQ.item.key || currentQ.item.tp;
+                setMistakes(prev => ({
+                  ...prev,
+                  [wordKey]: {
+                    key: wordKey,
+                    tp: currentQ.item.tp,
+                    cn: currentQ.item.cn || currentQ.correctAnswer,
+                    type: currentQ.item.type || '測驗錯題',
+                    count: (prev[wordKey]?.count || 0) + 1,
+                    lastWrong: Date.now()
+                  }
+                }));
+              }
+            }
+          };
+
+          const handleNextQuestion = () => {
+            if (currentQuizIndex + 1 < quizQuestions.length) {
+              const nextIdx = currentQuizIndex + 1;
+              setCurrentQuizIndex(nextIdx);
+              setSelectedOption(null);
+              setIsAnswered(false);
+
+              if (quizQuestions[nextIdx].type === 'listening' || quizQuestions[nextIdx].type === 'listening_to_sitelen') {
+                setTimeout(() => speak(quizQuestions[nextIdx].item.tp), 400);
+              }
+            } else {
+              setQuizState('result');
+            }
+          };
+
+
+          return (
+            <div className="flex h-screen text-[#2c2825] font-sans overflow-hidden" style={{backgroundColor: '#f9f6f0'}}>
+              
+              {/* Mobile Sidebar Toggle */}
+              <div className={`fixed inset-0 bg-black/30 z-20 md:hidden transition-opacity ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
+                   onClick={() => setIsSidebarOpen(false)} />
+
+              {/* Sidebar Navigation */}
+              <aside className={`
+                absolute md:relative z-30 w-72 flex flex-col h-full transition-transform duration-300
+                ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+              `} style={{backgroundColor: '#f0ede8', borderRight: '1px solid #e0dbd3'}}>
+                <div className="p-6 flex justify-between items-center" style={{borderBottom: "1px solid #e0dbd3", backgroundColor: "#f0ede8"}}>
+                  <div>
+                    <h1 className="text-2xl font-bold text-[#2c2825] tracking-wider flex items-center gap-2">
+                      <Book className="text-[#5b7b5a]" />
+                      TOKI PONA
+                    </h1>
+                    <p className="text-xs mt-1 uppercase tracking-widest" style={{color: "#9e9590"}}>留白習字 · 簡約之語</p>
+                  </div>
+                  <button onClick={() => setIsSidebarOpen(false)} className="md:hidden hover:opacity-70" style={{color: "#9e9590"}}>
+                    <X size={24} />
+                  </button>
+                </div>
+
+                {/* 學習進度摘要卡片 */}
+                <div className="px-6 py-4" style={{backgroundColor: "#ece8e2", borderBottom: "1px solid #e0dbd3"}}>
+                  <div className="flex justify-between text-xs font-bold mb-1.5" style={{color: "#6b6460"}}>
+                    <span>學習進度掌握</span>
+                    <span className="font-bold" style={{color: "#5b7b5a"}}>{masteredCount} / {totalWordsCount} 詞 ({masteryPercentage}%)</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full overflow-hidden" style={{backgroundColor: "#e0dbd3"}}>
+                    <div className="h-full transition-all duration-500" style={{backgroundColor: "#5b7b5a", width: `${masteryPercentage}%`}}></div>
+                  </div>
+                </div>
+
+                <nav className="flex-1 overflow-y-auto py-4 space-y-1 custom-scrollbar" style={{backgroundColor: "#f0ede8"}}>
+                  <div className="px-6 mb-2 text-xs font-bold uppercase tracking-wider" style={{color: "#9e9590", letterSpacing: "0.12em"}}>章節導航</div>
+                  {window.VOCAB_DATA.map(cat => (
+                    <button
+                      key={cat.id}
+                      onClick={() => {
+                        setSelectedCategory(cat);
+                        setActiveTab('learn');
+                        setSearchTerm('');
+                        if (window.innerWidth < 768) setIsSidebarOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-all
+                        ${selectedCategory.id === cat.id && activeTab === 'learn'
+                          ? 'text-[#2c2825] font-semibold' + ' ' + 'bg-[#f9f6f0]' + ' ' + 'border-l-[3px] border-[#5b7b5a]' 
+                          : 'hover:bg-[#ece8e2] text-[#6b6460] hover:text-[#2c2825]'}
+                      `}
+                    >
+                      <span className={selectedCategory.id === cat.id && activeTab === 'learn' ? 'text-[#5b7b5a]' : 'text-[#9e9590]'}>
+                        {renderIcon(cat.icon)}
+                      </span>
+                      <span className="truncate">{cat.title.split('(')[0]}</span>
+                    </button>
+                  ))}
+                  
+                  <div className="mt-6 px-6 mb-2 text-xs font-bold uppercase tracking-wider" style={{color: "#9e9590", letterSpacing: "0.12em"}}>工具 & 練習</div>
+                  <button
+                     onClick={() => {
+                       setActiveTab('all');
+                       if (window.innerWidth < 768) setIsSidebarOpen(false);
+                     }}
+                     className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors
+                        ${activeTab === 'all'
+                          ? 'text-[#2c2825] font-semibold bg-[#f9f6f0] border-l-[3px] border-[#5b7b5a]' 
+                          : 'hover:bg-[#ece8e2] text-[#6b6460] hover:text-[#2c2825]'}
+                      `}
+                  >
+                    <Search size={20} className={activeTab === 'all' ? 'text-[#5b7b5a]' : 'text-[#9e9590]'} />
+                    <span>全詞彙字典 (Dictionary)</span>
+                  </button>
+
+                  <button
+                     onClick={() => {
+                       setActiveTab('quiz');
+                       setQuizState('start');
+                       if (window.innerWidth < 768) setIsSidebarOpen(false);
+                     }}
+                     className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors
+                        ${activeTab === 'quiz'
+                          ? 'text-[#2c2825] font-semibold bg-[#f9f6f0] border-l-[3px] border-[#e07a48]' 
+                          : 'hover:bg-[#ece8e2] text-[#6b6460] hover:text-[#2c2825]'}
+                      `}
+                  >
+                    <Zap size={20} className={activeTab === 'quiz' ? 'text-[#e07a48]' : 'text-[#e07a48]'} />
+                    <span>隨堂測驗 (Quiz Mode)</span>
+                  </button>
+                </nav>
+
+                {/* 顯示與語言設定 (Sidebar Settings) */}
+                <div className="p-4 text-xs flex-shrink-0" style={{borderTop: "1px solid #e0dbd3", backgroundColor: "#f0ede8"}}>
+                  <div className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5" style={{color: "#6b6460", letterSpacing: "0.1em"}}>
+                    <Sliders size={14} style={{color: "#9e9590"}} />
+                    <span>偏好與顯示設定</span>
+                  </div>
+
+                  {/* Sitelen Pona Toggle */}
+                  <div className="mb-3 p-2.5 rounded-xl flex items-center justify-between" style={{backgroundColor: "#ece8e2", border: "1px solid #e0dbd3"}}>
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="sitelen-pona text-2xl text-amber-400 leading-none select-none flex-shrink-0">toki</span>
+                      <div className="min-w-0">
+                        <div className="font-bold text-xs truncate" style={{color: "#2c2825"}}>Sitelen Pona</div>
+                        <div className="text-[10px]" style={{color: "#9e9590"}}>象形文字顯示</div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setShowSitelen(prev => !prev)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 flex-shrink-0 ${
+                        showSitelen 
+                          ? 'bg-[#e07a48] text-white shadow-md ring-2 ring-[#e07a48]/30' 
+                          : 'text-[#9e9590] hover:text-[#2c2825]' + ' ' + 'border border-[#e0dbd3] hover:bg-[#ece8e2]'
+                      }`}
+                      title={showSitelen ? '點擊關閉象形文字' : '點擊開啟象形文字'}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${showSitelen ? 'bg-white' : 'bg-[#b5a8a0]'}`}></span>
+                      <span>{showSitelen ? '已開啟' : '已關閉'}</span>
+                    </button>
+                  </div>
+
+                  {/* Language Selector */}
+                  <div className="p-2.5 rounded-xl" style={{backgroundColor: "#ece8e2", border: "1px solid #e0dbd3"}}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-bold text-xs flex items-center gap-1.5" style={{color: "#2c2825"}}>
+                        <Globe size={13} style={{color: "#5b7b5a"}} />
+                        釋義語言
+                      </span>
+                      <span className="text-[10px]" style={{color: "#6b6460"}}>
+                        {lang === 'zh' ? '繁體中文' : lang === 'en' ? 'English' : '日本語'}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1 p-1 rounded-lg" style={{backgroundColor: "#f0ede8", border: "1px solid #e0dbd3"}}>
+                      {[
+                        { id: 'zh', label: '繁中' },
+                        { id: 'en', label: 'EN' },
+                        { id: 'ja', label: '日本語' }
+                      ].map(l => (
+                        <button
+                          key={l.id}
+                          onClick={() => setLang(l.id)}
+                          className={`py-1 rounded text-center text-[11px] font-semibold transition-all ${
+                            lang === l.id 
+                              ? 'bg-[#5b7b5a] text-white shadow-sm' 
+                              : 'text-[#6b6460] hover:text-[#2c2825] hover:bg-[#ece8e2]'
+                          }`}
+                        >
+                          {l.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 text-xs" style={{borderTop: "1px solid #e0dbd3", backgroundColor: "#ece8e2", color: "#9e9590"}}>
+                  <div className="flex justify-between">
+                    <span>Toki Pona App</span>
+                    <span>v3.0 Stitch Edition</span>
+                  </div>
+                </div>
+              </aside>
+
+              {/* Main Content Area */}
+              <main className="flex-1 flex flex-col h-full overflow-hidden w-full relative" style={{backgroundColor: "#f9f6f0"}}>
+                
+                {/* Top Bar */}
+                <header className="h-16 border-b flex items-center justify-between px-3 md:px-8 z-10 flex-shrink-0" style={{backgroundColor: "#f9f6f0", borderColor: "#e0dbd3", boxShadow: "0 1px 3px rgba(44,40,37,0.06)"}}>
+                  <div className="flex items-center gap-3 md:gap-4 min-w-0 mr-2">
+                     <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-1.5 rounded-lg flex-shrink-0 hover:bg-[#ece8e2]" style={{color: "#6b6460"}}>
+                       <Menu size={22} />
+                     </button>
+                     
+                     <div className="flex items-center gap-2.5">
+                       <span className="text-2xl select-none flex-shrink-0" style={{color: "#5b7b5a"}}>🌱</span>
+                       <span className="text-base sm:text-lg md:text-xl font-bold tracking-tight hidden sm:inline" style={{color: "#2c2825"}}>Toki Pona App</span>
+                     </div>
+                     <span className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold" style={{backgroundColor: "#f0f5f1", color: "#5b7b5a", border: "1px solid #c8dbc8"}}>Stitch Edition</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    {/* 快速篩選列 (在桌面端 md 以上顯示於 header) */}
+                    {(activeTab === 'learn' || activeTab === 'all') && (
+                      <div className="hidden md:flex p-1 rounded-lg text-xs font-medium flex-shrink-0" style={{backgroundColor: "#ece8e2"}}>
+                        <button
+                          onClick={() => setStatusFilter('all')}
+                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'all' ? 'bg-white text-[#2c2825] shadow-sm font-semibold' : 'text-[#9e9590] hover:text-[#2c2825]'}`}
+                        >
+                          全部
+                        </button>
+                        <button
+                          onClick={() => setStatusFilter('mastered')}
+                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'mastered' ? 'bg-[#6f906a] text-white shadow-sm font-semibold' : 'text-[#9e9590] hover:text-[#2c2825]'}`}
+                        >
+                          已學會 ({masteredCount})
+                        </button>
+                        <button
+                          onClick={() => setStatusFilter('unmastered')}
+                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'unmastered' ? 'bg-[#5b7b5a] text-white shadow-sm font-semibold' : 'text-[#9e9590] hover:text-[#2c2825]'}`}
+                        >
+                          未學會 ({totalWordsCount - masteredCount})
+                        </button>
+                        <button
+                          onClick={() => setStatusFilter('noted')}
+                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'noted' ? 'bg-[#e07a48] text-white shadow-sm font-semibold' : 'text-[#9e9590] hover:text-[#2c2825]'}`}
+                        >
+                          筆記 ({notedCount})
+                        </button>
+                      </div>
+                    )}
+
+                    {activeTab === 'all' && (
+                      <div className="hidden md:block relative w-48 md:w-56">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{color: "#9e9590"}} />
+                        <input 
+                          type="text" 
+                          placeholder="搜尋單字..." 
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="pl-9 pr-4 py-1.5 rounded-full text-sm focus:ring-2 focus:ring-[#5b7b5a] w-full transition-all" style={{backgroundColor: "#ece8e2", border: "1px solid #e0dbd3", color: "#2c2825"}}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </header>
+
+                {/* Scrollable Content */}
+                <div className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8 scroll-smooth" style={{backgroundColor: "#f9f6f0"}}>
+                  <div className="max-w-6xl mx-auto">
+                    
+                    {/* === 1. LEARN MODE & ALL MODE === */}
+                    {activeTab !== 'quiz' && (
+                      <>
+                        {/* Description Area (Only in Learn Mode) */}
+                        {activeTab === 'learn' && (
+                          <div className="mb-8 p-6 rounded-xl shadow-sm flex flex-col md:flex-row justify-between items-start gap-4" style={{backgroundColor: "#ffffff", borderLeft: "4px solid #5b7b5a", border: "1px solid #e0dbd3", borderLeftWidth: "4px", borderLeftColor: "#5b7b5a"}}>
+                            <div>
+                              <h3 className="text-lg font-bold mb-1" style={{color: "#2c2825"}}>本單元簡介</h3>
+                              <p className="leading-relaxed" style={{color: "#6b6460"}}>{selectedCategory.description}</p>
+                            </div>
+                            <div className="flex gap-2 flex-wrap">
+                               <div className="text-xs font-mono px-3 py-1 rounded-full border font-bold whitespace-nowrap" style={{backgroundColor: "#ece8e2", color: "#5b7b5a", borderColor: "#e0dbd3"}}>
+                                {selectedCategory.words.length} 單字
+                              </div>
+                              <div className="text-xs font-mono px-3 py-1 rounded-full border font-bold whitespace-nowrap" style={{backgroundColor: "#f0f5f1", color: "#6f906a", borderColor: "#c8dbc8"}}>
+                                {selectedCategory.sentences.length} 例句/短文
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Vocabulary Grid */}
+                        <div className="mb-6">
+                            {/* 行動端快速篩選列 (手機上置頂展示，具備磨砂和紙懸浮效果) */}
+                            {(activeTab === "learn" || activeTab === "all") && (
+                              <div className="lg:hidden sticky top-0 z-10 pt-1 pb-2.5 mb-3 -mx-4 px-4 backdrop-blur-md transition-all" style={{backgroundColor: "rgba(250, 249, 247, 0.94)"}}>
+                                <div className="flex p-1 rounded-xl text-[11px] sm:text-xs font-medium w-full justify-between gap-1 shadow-sm" style={{backgroundColor: "#ece8e2", border: "1px solid #e0dbd3"}}>
+                                  <button
+                                    onClick={() => setStatusFilter("all")}
+                                    className={`flex-1 py-1.5 rounded-lg transition-all text-center truncate ${statusFilter === "all" ? "bg-white text-[#2c2825] shadow-sm font-semibold" : "text-[#6b6460]"}`}
+                                  >
+                                    全部
+                                  </button>
+                                  <button
+                                    onClick={() => setStatusFilter("mastered")}
+                                    className={`flex-1 py-1.5 rounded-lg transition-all text-center truncate ${statusFilter === "mastered" ? "bg-[#6f906a] text-white shadow-sm font-semibold" : "text-[#6b6460]"}`}
+                                  >
+                                    已學 ({masteredCount})
+                                  </button>
+                                  <button
+                                    onClick={() => setStatusFilter("unmastered")}
+                                    className={`flex-1 py-1.5 rounded-lg transition-all text-center truncate ${statusFilter === "unmastered" ? "bg-[#5b7b5a] text-white shadow-sm font-semibold" : "text-[#6b6460]"}`}
+                                  >
+                                    未學 ({totalWordsCount - masteredCount})
+                                  </button>
+                                  <button
+                                    onClick={() => setStatusFilter("noted")}
+                                    className={`flex-1 py-1.5 rounded-lg transition-all text-center truncate ${statusFilter === "noted" ? "bg-[#e07a48] text-white shadow-sm font-semibold" : "text-[#6b6460]"}`}
+                                  >
+                                    筆記 ({notedCount})
+                                  </button>
+                                </div>
+
+                                {/* 手機版全詞彙搜尋框 */}
+                                {activeTab === 'all' && (
+                                  <div className="md:hidden relative mt-2">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{color: "#9e9590"}} />
+                                    <input 
+                                      type="text" 
+                                      placeholder="搜尋單字、釋義或筆記..." 
+                                      value={searchTerm}
+                                      onChange={(e) => setSearchTerm(e.target.value)}
+                                      className="pl-9 pr-8 py-2 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-[#5b7b5a] w-full transition-all shadow-sm"
+                                      style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3", color: "#2c2825"}}
+                                    />
+                                    {searchTerm && (
+                                      <button 
+                                        onClick={() => setSearchTerm('')}
+                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[#9e9590] hover:text-[#2c2825]"
+                                      >
+                                        <X size={14} />
+                                      </button>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                           <div className="flex justify-between items-center mb-4">
+                             <h3 className="text-sm font-bold uppercase tracking-widest flex items-center gap-2" style={{color: "#9e9590"}}>
+                               <Hash size={14} /> {activeTab === 'learn' ? 'Core Vocabulary' : 'Dictionary Search Results'} ({filteredWords.length})
+                             </h3>
+                           </div>
+
+                           {filteredWords.length === 0 ? (
+                             <div className="rounded-xl p-12 text-center" style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3"}}>
+                               <p className="text-lg mb-2" style={{color: "#9e9590"}}>沒有找到符合條件的單字</p>
+                               <p className="text-xs" style={{color: "#9e9590"}}>請嘗試切換篩選狀態或更改搜尋關鍵字</p>
+                             </div>
+                           ) : (
+                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-12">
+                              {filteredWords.map((word, idx) => {
+                                const isMastered = !!masteredWords[word.key];
+                                return (
+                                  <div 
+                                    key={idx}
+                                    onClick={() => speak(word.tp)}
+                                    className={`group bg-white rounded-xl border p-4 sm:p-5 hover:shadow-sm transition-all text-left relative overflow-hidden cursor-pointer flex flex-col justify-between active:scale-[0.99]
+                                      ${isMastered ? 'border-[#6f906a] bg-[#f0f5f1]/50' : 'border-[#e0dbd3] hover:border-[#5b7b5a]'}
+                                    `}
+                                  >
+                                    <div>
+                                      <div className="flex justify-between items-start mb-2">
+                                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded
+                                          ${word.type === '動/名' ? 'bg-[#f5ede0] text-[#e07a48]' : 
+                                            word.type === '助詞' || word.type === '介係' || word.type === '文法' ? 'bg-[#e6edf1] text-[#5b7b5a]' :
+                                            word.type === '修飾' ? 'bg-[#f0e8e9] text-[#d4795a]' :
+                                            'bg-[#ece8e2] text-[#9e9590]'}
+                                        `}>
+                                          {word.type}
+                                        </span>
+                                        <div className="flex items-center gap-1.5">
+                                          {/* 自訂筆記按鈕 */}
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              if (editingNoteKey === word.key) {
+                                                setEditingNoteKey(null);
+                                              } else {
+                                                setEditingNoteKey(word.key);
+                                                setNoteInputText(notes[word.key] || '');
+                                              }
+                                            }}
+                                            title="新增或編輯個人筆記"
+                                            className={`p-2 sm:p-1.5 rounded-full transition-all ${
+                                              notes[word.key] 
+                                                ? 'bg-[#f0e8de] text-[#e07a48] hover:bg-[#e8d8c8] shadow-sm' 
+                                                : 'bg-[#ece8e2] text-[#9e9590] hover:bg-[#f0e8de] hover:text-[#e07a48]'
+                                            }`}
+                                          >
+                                            <FileText size={13} />
+                                          </button>
+
+                                          {/* 已學會 / 收藏勾選按鈕 */}
+                                          <button
+                                            onClick={(e) => toggleMastered(word.key, e)}
+                                            title={isMastered ? '標記為未學會' : '標記為已學會'}
+                                            className={`p-2 sm:p-1.5 rounded-full transition-all ${isMastered ? 'bg-[#6f906a] text-white shadow-sm' : 'bg-[#ece8e2] text-[#9e9590] hover:bg-[#f0f5f1] hover:text-[#6f906a]'}`}
+                                          >
+                                            <Check size={14} />
+                                          </button>
+                                          <Volume2 size={16} className="transition-colors" style={{color: "#d1ccc4"}} onMouseOver={(e)=>e.currentTarget.style.color="#5b7b5a"} onMouseOut={(e)=>e.currentTarget.style.color="#d1ccc4"} />
+                                        </div>
+                                      </div>
+                                      
+                                      <div className="flex items-baseline gap-2.5 mb-1">
+                                        <h3 className="text-2xl font-bold font-serif transition-colors" style={{color: "#2c2825"}}>
+                                          {word.tp}
+                                        </h3>
+                                        {showSitelen && (
+                                          <span className="sitelen-pona text-2xl text-amber-600 select-none">
+                                            {word.tp.replace(/\s*\(.*?\)/, '').toLowerCase()}
+                                          </span>
+                                        )}
+                                      </div>
+                                      <p className="text-sm font-medium leading-relaxed" style={{color: "#2c2825"}}>
+                                        {getMeaning(word)}
+                                      </p>
+                                      {lang !== 'zh' && (
+                                        <p className="text-xs mt-0.5" style={{color: "#9e9590"}}>
+                                          {word.cn}
+                                        </p>
+                                      )}
+
+                                      {/* 個人筆記預覽 (若有筆記且非編輯狀態) */}
+                                      {notes[word.key] && editingNoteKey !== word.key && (
+                                        <div 
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setEditingNoteKey(word.key);
+                                            setNoteInputText(notes[word.key] || '');
+                                          }}
+                                          className="mt-2.5 p-2 rounded-lg text-xs flex items-start gap-1.5 hover:opacity-90 transition-opacity cursor-pointer" style={{backgroundColor: "#faf5ee", border: "1px solid #e0c9a8", color: "#6b5040"}}
+                                          title="點擊編輯個人筆記"
+                                        >
+                                          <span className="font-bold select-none text-[11px] leading-tight" style={{color: "#e07a48"}}>📝</span>
+                                          <span className="line-clamp-2 leading-tight flex-1 text-[11px]">{notes[word.key]}</span>
+                                        </div>
+                                      )}
+
+                                      {/* 個人筆記編輯器 (若當前處於編輯狀態) */}
+                                      {editingNoteKey === word.key && (
+                                        <div 
+                                          onClick={(e) => e.stopPropagation()} 
+                                          className="mt-3 p-2.5 rounded-xl shadow-sm space-y-2" style={{backgroundColor: "#faf5ee", border: "1px solid #e0c9a8"}}
+                                        >
+                                          <div className="flex items-center justify-between text-[11px] font-bold" style={{color: "#6b5040"}}>
+                                            <span>自訂筆記 / 記憶口訣</span>
+                                            <button 
+                                              onClick={() => setEditingNoteKey(null)}
+                                              className="hover:opacity-80 transition-opacity" style={{color: "#e07a48"}}
+                                            >
+                                              <X size={13} />
+                                            </button>
+                                          </div>
+                                          <textarea
+                                            value={noteInputText}
+                                            onChange={(e) => setNoteInputText(e.target.value)}
+                                            placeholder="寫下您的記憶口訣或筆記..."
+                                            className="w-full text-xs p-2 rounded-lg border focus:outline-none focus:ring-1 bg-white resize-none" style={{borderColor: "#e0c9a8", color: "#2c2825"}} onFocus={(e)=>e.target.style.boxShadow="0 0 0 2px #e07a4860"} onBlur={(e)=>e.target.style.boxShadow=""}
+                                            rows="2"
+                                            autoFocus
+                                          />
+                                          <div className="flex justify-end gap-1.5">
+                                            {notes[word.key] && (
+                                              <button
+                                                onClick={() => saveNote(word.key, '')}
+                                                className="px-2 py-1 rounded text-[11px] font-medium transition-colors hover:opacity-90" style={{color: "#d4795a"}}
+                                              >
+                                                刪除
+                                              </button>
+                                            )}
+                                            <button
+                                              onClick={() => saveNote(word.key, noteInputText)}
+                                              className="px-3 py-1 rounded text-white font-bold text-[11px] shadow-sm transition-colors" style={{backgroundColor: "#e07a48"}}
+                                            >
+                                              儲存
+                                            </button>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {activeTab === 'all' && word.categoryTitle && (
+                                      <div className="mt-4 pt-2 text-[10px] truncate" style={{borderTop: "1px solid #e0dbd3", color: "#9e9590"}}>
+                                        單元: {word.categoryTitle.split('(')[0]}
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                           )}
+                        </div>
+
+                        {/* Daily Dialogues Section (When Category has Dialogues) */}
+                        {activeTab === 'learn' && selectedCategory.dialogues && selectedCategory.dialogues.length > 0 && (
+                          <div className="rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden mb-8" style={{backgroundColor: "#f5f3ef", border: "1px solid #e0dbd3", color: "#2c2825"}}>
+                            <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none opacity-0"></div>
+                            
+                            <div className="flex items-center gap-3 mb-6 relative z-10 pb-4" style={{borderBottom: "1px solid #e0dbd3"}}>
+                              <div className="p-2 rounded-lg" style={{backgroundColor: "#e6edf1"}}>
+                                <MessageSquare size={24} style={{color: "#5b7b5a"}} />
+                              </div>
+                              <div>
+                                <h3 className="text-xl font-bold" style={{color: "#2c2825"}}>日常實用情境對話</h3>
+                                <p className="text-xs" style={{color: "#6b6460"}}>點擊小喇叭聆聽發音，沉浸式練習實用交際會話</p>
+                              </div>
+                            </div>
+
+                            <div className="space-y-6 relative z-10">
+                              {selectedCategory.dialogues.map((diag, dIdx) => (
+                                <div key={dIdx} className="rounded-xl p-5" style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3"}}>
+                                  <h4 className="text-md font-semibold mb-4 pb-2 flex items-center gap-2" style={{color: "#5b7b5a", borderBottom: "1px solid #e0dbd3"}}>
+                                    <span className="w-2 h-2 rounded-full" style={{backgroundColor: "#5b7b5a"}}></span>
+                                    {diag.sceneTitle}
+                                  </h4>
+                                  <div className="space-y-3">
+                                    {diag.rounds.map((round, rIdx) => (
+                                      <div 
+                                        key={rIdx} 
+                                        className="flex items-start gap-3 p-3.5 rounded-xl transition-all"
+                                        style={{backgroundColor: round.speaker === 'A' ? '#f9f6f0' : '#f0ede8', border: '1px solid #e0dbd3'}}
+                                      >
+                                        <span className="px-2 py-0.5 rounded text-xs font-bold mt-0.5 flex-shrink-0 text-white"
+                                          style={{backgroundColor: round.speaker === 'A' ? '#5b7b5a' : '#6f906a'}}
+                                        >
+                                          {round.speaker}
+                                        </span>
+                                        <div className="flex-1">
+                                          <div className="flex items-center justify-between">
+                                            <div>
+                                              {showSitelen && (
+                                                <p className="sitelen-pona text-2xl mb-1 leading-snug tracking-wider select-none" style={{color: '#5b7b5a'}}>
+                                                  {round.tp.toLowerCase().replace(/[^a-z ]/g, '')}
+                                                </p>
+                                              )}
+                                              <p className="font-medium font-serif text-base leading-snug" style={{color: '#2c2825'}}>{round.tp}</p>
+                                            </div>
+                                            <button 
+                                              onClick={() => speak(round.tp)}
+                                              className="p-1.5 rounded-lg transition-all ml-2 flex-shrink-0 hover:bg-[#ece8e2]"
+                                              style={{color: '#9e9590'}}
+                                              title="點擊發音"
+                                            >
+                                              <Volume2 size={16} />
+                                            </button>
+                                          </div>
+                                          <p className="text-xs mt-1 leading-relaxed" style={{color: '#3d3935'}}>{round.cn}</p>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Context Sentences Section (Only in Learn Mode) */}
+                        {activeTab === 'learn' && selectedCategory.sentences && selectedCategory.sentences.length > 0 && (
+                          <div className="rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden" style={{backgroundColor: "#f5f3ef", border: "1px solid #e0dbd3", color: "#2c2825"}}>
+                            <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none opacity-0"></div>
+                            
+                            <div className="flex items-center gap-3 mb-8 relative z-10">
+                              <div className="p-2 rounded-lg" style={{backgroundColor: "#e6edf1"}}>
+                                <MessageSquare size={24} style={{color: "#5b7b5a"}} />
+                              </div>
+                              <div>
+                                <h3 className="text-xl font-bold" style={{color: "#2c2825"}}>
+                                  {selectedCategory.id === 'stories' ? '閱讀練習' : '實用例句練習'}
+                                </h3>
+                                <p className="text-xs" style={{color: "#6b6460"}}>點擊文字以聆聽發音</p>
+                              </div>
+                            </div>
+                            
+                            <div className={`grid gap-4 relative z-10 ${selectedCategory.id === 'stories' || selectedCategory.id === 'sentence_building' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
+                              {selectedCategory.sentences.map((sent, i) => (
+                                <button 
+                                  key={i} 
+                                  onClick={() => speak(sent.tp)}
+                                  className="group flex flex-col items-start gap-2 p-5 rounded-xl transition-all text-left hover:shadow-sm" style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3"}}
+                                >
+                                  <div className="flex items-start justify-between w-full">
+                                     <div className="flex gap-3 w-full">
+                                        <span className="font-mono text-sm font-semibold mt-1 flex-shrink-0" style={{color: "#5b7b5a"}}>
+                                          {selectedCategory.id === 'stories' ? <FileText size={16} /> : `0${i + 1}`}
+                                        </span>
+                                        <div className="w-full">
+                                          {showSitelen && (
+                                            <p className="sitelen-pona text-2xl mb-1 leading-snug tracking-wider select-none" style={{color: "#e07a48"}}>
+                                              {sent.tp.toLowerCase().replace(/[^a-z ]/g, '')}
+                                            </p>
+                                          )}
+                                          <p className="text-lg font-medium transition-colors font-serif leading-relaxed w-full" style={{color: "#2c2825"}}>
+                                            {sent.tp}
+                                          </p>
+                                        </div>
+                                     </div>
+                                     <Volume2 size={16} className="opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0 mt-1 ml-2" style={{color: "#5b7b5a"}} />
+                                  </div>
+                                  
+                                  <div className="pl-8 transition-colors ml-1 mt-2" style={{borderLeft: "3px solid #5b7b5a"}}>
+                                    <p className="text-sm leading-relaxed font-normal" style={{color: "#3d3935"}}>
+                                      {sent.cn}
+                                    </p>
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
+
+
+                    {/* === 3. QUIZ MODE === */}
+                    {activeTab === 'quiz' && (
+                      <div className="max-w-2xl mx-auto">
+                        
+                        {/* Quiz Start Screen */}
+                        {quizState === 'start' && (
+                          <div className="rounded-2xl shadow-sm p-8" style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3"}}>
+                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner" style={{backgroundColor: "#e6edf1", color: "#5b7b5a"}}>
+                              <Trophy size={32} />
+                            </div>
+                            <h3 className="text-2xl font-bold mb-2 text-center" style={{color: "#2c2825"}}>Toki Pona 隨堂測驗</h3>
+                            <p className="mb-6 text-center max-w-md mx-auto" style={{color: "#6b6460"}}>
+                              透過多元題型挑戰您的道本語實力！請選擇測驗類型與範圍：
+                            </p>
+
+                            {/* Quiz Type Selector */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
+                              {[
+                                { id: 'mixed', label: '綜合混合測驗', icon: Zap, desc: '涵蓋各類題型' },
+                                { id: 'vocab', label: '單字釋義測驗', icon: Book, desc: '道本語與釋義互選' },
+                                { id: 'sitelen', label: '象形文字測驗', icon: Feather, desc: 'Sitelen Pona 圖像測驗' },
+                                { id: 'listening', label: '發音聽力測驗', icon: Volume2, desc: '聽發音選單字/釋義' },
+                                { id: 'cloze', label: '例句克漏字', icon: MessageSquare, desc: '例句挖空填空' },
+                              ].map(m => {
+                                const IconComp = m.icon;
+                                const isSelected = selectedQuizType === m.id;
+                                return (
+                                  <button
+                                    key={m.id}
+                                    onClick={() => setSelectedQuizType(m.id)}
+                                    className={`p-4 rounded-xl border-2 text-left transition-all flex flex-col justify-between ${
+                                      isSelected 
+                                        ? 'shadow-sm text-[#2c2825] border-[#5b7b5a] bg-[#e6edf1]' 
+                                        : 'text-[#6b6460] hover:text-[#2c2825] hover:shadow-sm border-[#e0dbd3] bg-[#f9f6f0]'
+                                    }`}
+                                  >
+                                    <div>
+                                      <div className="flex items-center justify-between mb-2">
+                                        <IconComp size={20} className={isSelected ? 'text-[#5b7b5a]' : 'text-[#9e9590]'} />
+                                        {isSelected && <Check size={16} className="text-purple-600 font-bold" />}
+                                      </div>
+                                      <div className="font-bold text-sm mb-1">{m.label}</div>
+                                    </div>
+                                    <div className="text-[11px]" style={{color: "#9e9590"}}>{m.desc}</div>
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+                              <button
+                                onClick={() => startQuiz(allWordsWithKey, selectedQuizType)}
+                                className="px-6 py-3.5 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 hover:opacity-90" style={{backgroundColor: "#5b7b5a"}}
+                              >
+                                <Zap size={20} />
+                                開始測驗 (10題)
+                              </button>
+
+                              {masteredCount > 0 && selectedQuizType !== 'cloze' && (
+                                <button
+                                  onClick={() => {
+                                    const masteredList = allWordsWithKey.filter(w => masteredWords[w.key]);
+                                    startQuiz(masteredList, selectedQuizType);
+                                  }}
+                                  className="px-6 py-3.5 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 hover:opacity-90" style={{backgroundColor: "#6f906a"}}
+                                >
+                                  <Star size={20} />
+                                  測驗已學會單字 ({masteredCount}題)
+                                </button>
+                              )}
+
+                              {mistakesList.length > 0 && selectedQuizType !== 'cloze' && (
+                                <button
+                                  onClick={() => {
+                                    startQuiz(mistakesList, selectedQuizType);
+                                  }}
+                                  className="px-6 py-3.5 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 hover:opacity-90 active:scale-95" style={{backgroundColor: "#d4795a"}}
+                                >
+                                  <Hash size={20} />
+                                  🎯 錯題本弱點強化 ({mistakesList.length}題)
+                                </button>
+                              )}
+                            </div>
+
+                            {/* 錯題本總覽清單 */}
+                            {mistakesList.length > 0 && (
+                              <div className="mt-8 pt-6 text-left" style={{borderTop: "1px solid #e0dbd3"}}>
+                                <div className="flex items-center justify-between mb-4">
+                                  <div className="flex items-center gap-2">
+                                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+                                    <h4 className="font-bold text-sm" style={{color: "#2c2825"}}>錯題本紀錄清單 ({mistakesList.length})</h4>
+                                  </div>
+                                  <button
+                                    onClick={clearAllMistakes}
+                                    className="text-xs text-rose-500 hover:text-rose-700 transition-colors"
+                                  >
+                                    清空錯題本
+                                  </button>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                                  {mistakesList.map((mItem, idx) => (
+                                    <div key={idx} className="flex items-center justify-between p-2.5 rounded-lg text-xs" style={{backgroundColor: "#f5f3ef", border: "1px solid #e0dbd3"}}>
+                                      <div>
+                                        <span className="font-bold font-serif mr-2" style={{color: "#2c2825"}}>{mItem.tp}</span>
+                                        <span className="" style={{color: "#6b6460"}}>{mItem.cn}</span>
+                                        {mItem.count > 1 && (
+                                          <span className="ml-1 px-1.5 py-0.2 bg-rose-100 text-rose-700 rounded-full font-mono text-[10px]">
+                                            錯 {mItem.count} 次
+                                          </span>
+                                        )}
+                                      </div>
+                                      <button
+                                        onClick={(e) => removeMistake(mItem.key || mItem.tp, e)}
+                                        className="p-1 hover:opacity-80 transition-opacity" style={{color: "#d4795a"}}
+                                        title="移出錯題本"
+                                      >
+                                        <X size={14} />
+                                      </button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Quiz Playing Screen */}
+                        {quizState === 'playing' && quizQuestions.length > 0 && (() => {
+                          const currentQ = quizQuestions[currentQuizIndex];
+                          const progressPercent = Math.round(((currentQuizIndex) / quizQuestions.length) * 100);
+
+                          return (
+                            <div className="rounded-2xl shadow-sm p-6 md:p-8" style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3"}}>
+                              {/* Header & Progress */}
+                              <div className="flex justify-between items-center mb-6">
+                                <span className="text-xs font-bold font-mono px-3 py-1 rounded-full" style={{backgroundColor: "#e6edf1", color: "#5b7b5a", border: "1px solid #e0dbd3"}}>
+                                  題目 {currentQuizIndex + 1} / {quizQuestions.length}
+                                </span>
+                                <span className="text-xs font-bold" style={{color: "#9e9590"}}>
+                                  得分: {quizScore}
+                                </span>
+                              </div>
+
+                              <div className="w-full h-2 rounded-full mb-8 overflow-hidden" style={{backgroundColor: "#e0dbd3"}}>
+                                <div className="h-full transition-all duration-300" style={{backgroundColor: "#5b7b5a", width: `${progressPercent}%`}}></div>
+                              </div>
+
+                              {/* Question Card */}
+                              <div className="text-center mb-8">
+                                <span className="text-xs font-bold uppercase tracking-widest block mb-2" style={{color: "#9e9590"}}>
+                                  {currentQ.type === 'tp_to_cn' && '請選擇正確的釋義意思：'}
+                                  {currentQ.type === 'cn_to_tp' && '請選擇正確的 Toki Pona 單字：'}
+                                  {currentQ.type === 'listening' && '請聆聽發音，選出對應的 Toki Pona 單字：'}
+                                  {currentQ.type === 'listening_to_sitelen' && '請聆聽發音，選出對應的 Sitelen Pona 象形文字：'}
+                                  {currentQ.type === 'sitelen_to_tp' && '請辨識 Sitelen Pona 象形文字，選出正確單字：'}
+                                  {currentQ.type === 'cn_to_sitelen' && '請依釋義，選出對應的 Sitelen Pona 象形文字：'}
+                                  {currentQ.type === 'cloze' && '例句克漏字填空：選出填入 _____ 的正確單字'}
+                                </span>
+
+                                {currentQ.type === 'listening' || currentQ.type === 'listening_to_sitelen' ? (
+                                  <div className="py-6">
+                                    <button
+                                      onClick={() => speak(currentQ.item.tp)}
+                                      className="w-24 h-24 text-white rounded-full flex items-center justify-center mx-auto shadow-sm transition-all hover:scale-105 active:scale-95 group hover:opacity-90" style={{backgroundColor: "#5b7b5a"}}
+                                      title="點擊播放語音"
+                                    >
+                                      <Volume2 size={40} className="group-hover:animate-pulse" />
+                                    </button>
+                                    <p className="text-xs font-medium mt-4" style={{color: "#5b7b5a"}}>點擊按鈕重複聆聽發音</p>
+                                  </div>
+                                ) : currentQ.type === 'cloze' ? (
+                                  <div className="mb-4">
+                                    <h3 className="text-2xl md:text-3xl font-bold font-serif mb-2 tracking-wide" style={{color: "#2c2825"}}>
+                                      {currentQ.questionText}
+                                    </h3>
+                                    <p className="text-sm py-1.5 px-4 rounded-full inline-block" style={{color: "#9e9590", backgroundColor: "#ece8e2"}}>
+                                      釋義：{currentQ.sentenceCn}
+                                    </p>
+                                  </div>
+                                ) : currentQ.type === 'sitelen_to_tp' ? (
+                                  <div className="py-4">
+                                    <div className="sitelen-pona text-6xl sm:text-7xl mb-2 leading-none select-none drop-shadow-sm" style={{color: "#e07a48"}}>
+                                      {currentQ.questionText}
+                                    </div>
+                                    <span className="text-xs" style={{color: "#9e9590"}}>這是哪一個單字的象形符號？</span>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <h3 className="text-3xl md:text-4xl font-bold font-serif mb-3" style={{color: "#2c2825"}}>
+                                      {currentQ.questionText}
+                                    </h3>
+                                    {currentQ.type === 'tp_to_cn' && (
+                                      <button 
+                                        onClick={() => speak(currentQ.questionText)}
+                                        className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full transition-colors font-medium hover:opacity-80" style={{color: "#5b7b5a", backgroundColor: "#e6edf1"}}
+                                      >
+                                        <Volume2 size={14} /> 聽取發音
+                                      </button>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Options Grid */}
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                                {currentQ.options.map((option, idx) => {
+                                  let btnStyle = "hover:shadow-sm transition-shadow border text-[#2c2825]"; let btnStyleObj = {backgroundColor: "#f9f6f0", borderColor: "#e0dbd3"};
+                                  if (isAnswered) {
+                                    if (option === currentQ.correctAnswer) {
+                                      btnStyle = "text-white shadow-sm border-transparent"; btnStyleObj = {backgroundColor: "#6f906a"};
+                                    } else if (option === selectedOption) {
+                                      btnStyle = "text-white border-transparent shadow-sm"; btnStyleObj = {backgroundColor: "#d4795a"};
+                                    } else {
+                                      btnStyle = "text-[#9e9590] opacity-50 border"; btnStyleObj = {backgroundColor: "#f9f6f0", borderColor: "#e0dbd3"};
+                                    }
+                                  }
+
+                                  const isSitelenOption = currentQ.type === 'cn_to_sitelen' || currentQ.type === 'listening_to_sitelen';
+
+                                  return (
+                                    <button
+                                      key={idx}
+                                      onClick={() => handleAnswerSelect(option)}
+                                      disabled={isAnswered}
+                                      className={`p-3.5 sm:p-4 rounded-xl border-2 font-medium text-base sm:text-lg transition-all text-center flex items-center justify-center min-h-[56px] sm:min-h-[64px] active:scale-[0.98] ${btnStyle}`}
+                                      style={btnStyleObj}
+                                    >
+                                      {isSitelenOption ? (
+                                        <span className="sitelen-pona text-4xl leading-none select-none" style={{color: "#e07a48"}}>
+                                          {option}
+                                        </span>
+                                      ) : (
+                                        <span>{option}</span>
+                                      )}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+
+                              {/* Feedback & Next Button */}
+                              {isAnswered && (
+                                <div className="p-6 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4 animate-fadeIn" style={{backgroundColor: "#f5f3ef", border: "1px solid #e0dbd3"}}>
+                                  <div>
+                                    <div className="flex items-center gap-2 mb-1">
+                                      {selectedOption === currentQ.correctAnswer ? (
+                                        <span className="font-bold flex items-center gap-1" style={{color: "#6f906a"}}>
+                                          <Check size={18} /> 答對了！ Pona!
+                                        </span>
+                                      ) : (
+                                        <span className="font-bold flex items-center gap-1" style={{color: "#d4795a"}}>
+                                          <X size={18} /> 答錯了！正確答案是：
+                                          {(currentQ.type === 'cn_to_sitelen' || currentQ.type === 'listening_to_sitelen') ? (
+                                            <span className="sitelen-pona text-2xl text-amber-500 ml-1 leading-none">{currentQ.correctAnswer}</span>
+                                          ) : (
+                                            <span>{currentQ.correctAnswer}</span>
+                                          )}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="text-xs" style={{color: "#6b6460"}}>
+                                      {currentQ.type === 'cloze' ? (
+                                        <span>完整例句: <strong className="font-serif" style={{color: "#2c2825"}}>{currentQ.originalTp}</strong> ({currentQ.sentenceCn})</span>
+                                      ) : (
+                                        <span className="flex items-center gap-1.5 flex-wrap">
+                                          <span className="sitelen-pona text-xl text-amber-500 leading-none select-none">
+                                            {currentQ.item.tp.replace(/\s*\(.*?\)/, '').toLowerCase()}
+                                          </span>
+                                          <span>單字: <strong className="" style={{color: "#2c2825"}}>{currentQ.item.tp}</strong> = {getMeaning(currentQ.item)} ({currentQ.item.type})</span>
+                                        </span>
+                                      )}
+                                    </p>
+                                  </div>
+
+                                  <button
+                                    onClick={handleNextQuestion}
+                                    className="w-full sm:w-auto px-6 py-3 text-white font-bold rounded-xl shadow-sm transition-all whitespace-nowrap hover:opacity-90 active:scale-95 text-center" style={{backgroundColor: "#2c2825"}}
+                                  >
+                                    {currentQuizIndex + 1 < quizQuestions.length ? '下一題' : '查看結算'}
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()}
+
+                        {/* Quiz Result Screen */}
+                        {quizState === 'result' && (
+                          <div className="rounded-2xl shadow-sm p-8 text-center animate-fadeIn" style={{backgroundColor: "#ffffff", border: "1px solid #e0dbd3"}}>
+                            <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner text-3xl" style={{backgroundColor: "#f0e8de", color: "#e07a48"}}>
+                              🎉
+                            </div>
+                            <h3 className="text-3xl font-bold mb-2" style={{color: "#2c2825"}}>測驗結算報告</h3>
+                            <p className="mb-6" style={{color: "#6b6460"}}>您已完成本輪 Toki Pona 隨堂測驗！</p>
+
+                            <div className="rounded-2xl p-6 max-w-sm mx-auto mb-8" style={{backgroundColor: "#f5f3ef", border: "1px solid #e0dbd3"}}>
+                              <div className="text-sm mb-1" style={{color: "#6b6460"}}>最終得分</div>
+                              <div className="text-4xl font-extrabold font-mono mb-2" style={{color: "#5b7b5a"}}>
+                                {quizScore} / {quizQuestions.length}
+                              </div>
+                              <div className="text-xs" style={{color: "#9e9590"}}>
+                                正確率: {Math.round((quizScore / quizQuestions.length) * 100)}%
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row justify-center gap-4">
+                              <button
+                                onClick={() => startQuiz(allWordsWithKey)}
+                                className="px-6 py-3 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 hover:opacity-90" style={{backgroundColor: "#5b7b5a"}}
+                              >
+                                <ArrowClockwise size={20} />
+                                再測一次
+                              </button>
+
+                              {wrongQuestions.length > 0 && (
+                                <button
+                                  onClick={() => {
+                                    const wrongItems = wrongQuestions.map(q => q.item);
+                                    startQuiz(wrongItems);
+                                  }}
+                                  className="px-6 py-3 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 hover:opacity-90 active:scale-95" style={{backgroundColor: "#d4795a"}}
+                                >
+                                  <X size={20} />
+                                  複習錯題 ({wrongQuestions.length}題)
+                                </button>
+                              )}
+
+                              <button
+                                onClick={() => setActiveTab('learn')}
+                                className="px-6 py-3 font-bold rounded-xl transition-all hover:opacity-80" style={{backgroundColor: "#ece8e2", color: "#2c2825"}}
+                              >
+                                返回學習首頁
+                              </button>
+                            </div>
+
+                            {wrongQuestions.length > 0 && (
+                              <div className="mt-8 pt-6 text-left" style={{borderTop: "1px solid #e0dbd3"}}>
+                                <h4 className="font-bold text-sm mb-3" style={{color: "#2c2825"}}>本次錯題檢討：</h4>
+                                <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                                  {wrongQuestions.map((wq, wIdx) => {
+                                    const tpWord = wq.item?.tp || wq.correctAnswer;
+                                    const pureTp = (tpWord || '').replace(/\s*\(.*?\)/, '').toLowerCase();
+                                    return (
+                                      <div key={wIdx} className="p-3 rounded-xl flex items-center justify-between text-xs" style={{backgroundColor: "#faf5f6", border: "1px solid #e8d0d4"}}>
+                                        <div className="flex items-center gap-2.5">
+                                          <span className="sitelen-pona text-2xl leading-none select-none" style={{color: "#e07a48"}}>{pureTp}</span>
+                                          <div>
+                                            <span className="font-bold font-serif mr-1.5" style={{color: "#2c2825"}}>{tpWord}</span>
+                                            <span className="" style={{color: "#6b6460"}}>{getMeaning(wq.item)}</span>
+                                          </div>
+                                        </div>
+                                        <span className="font-semibold font-mono" style={{color: "#d4795a"}}>
+                                          {(wq.type === 'cn_to_sitelen' || wq.type === 'listening_to_sitelen') ? (
+                                            <span className="sitelen-pona text-xl" style={{color: "#e07a48"}}>{wq.correctAnswer}</span>
+                                          ) : (
+                                            `正解: ${wq.correctAnswer}`
+                                          )}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                      </div>
+                    )}
+
+                  </div>
+                </div>
+              
+                {/* ==================== 行動端底部導航列 (Mobile Bottom Nav) ==================== */}
+                <nav className="md:hidden flex items-center justify-around h-16 border-t z-20 flex-shrink-0 select-none shadow-[0_-2px_10px_rgba(44,40,37,0.04)]" style={{backgroundColor: '#f0ede8', borderColor: '#e0dbd3'}}>
+                  {/* 1. 學習 (Learn) */}
+                  <button
+                    onClick={() => {
+                      setActiveTab('learn');
+                      if (!selectedCategory) setSelectedCategory(window.VOCAB_DATA[0]);
+                    }}
+                    className={`flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+                      activeTab === 'learn' ? 'text-[#2c2825] font-bold' : 'text-[#9e9590] hover:text-[#6b6460]'
+                    }`}
+                  >
+                    <div className={`p-1 rounded-lg transition-all ${activeTab === 'learn' ? 'bg-[#f9f6f0] shadow-sm' : ''}`}>
+                      <Book size={18} className={activeTab === 'learn' ? 'text-[#5b7b5a]' : 'text-[#9e9590]'} />
+                    </div>
+                    <span className="text-[10px] mt-0.5 tracking-wider">學習</span>
+                  </button>
+
+                  {/* 2. 全詞彙字典 (Dictionary) */}
+                  <button
+                    onClick={() => {
+                      setActiveTab('all');
+                    }}
+                    className={`flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+                      activeTab === 'all' ? 'text-[#2c2825] font-bold' : 'text-[#9e9590] hover:text-[#6b6460]'
+                    }`}
+                  >
+                    <div className={`p-1 rounded-lg transition-all ${activeTab === 'all' ? 'bg-[#f9f6f0] shadow-sm' : ''}`}>
+                      <Search size={18} className={activeTab === 'all' ? 'text-[#5b7b5a]' : 'text-[#9e9590]'} />
+                    </div>
+                    <span className="text-[10px] mt-0.5 tracking-wider">字典</span>
+                  </button>
+
+                  {/* 3. 隨堂測驗 (Quiz) */}
+                  <button
+                    onClick={() => {
+                      setActiveTab('quiz');
+                      setQuizState('start');
+                    }}
+                    className={`flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+                      activeTab === 'quiz' ? 'text-[#2c2825] font-bold' : 'text-[#9e9590] hover:text-[#6b6460]'
+                    }`}
+                  >
+                    <div className={`p-1 rounded-lg transition-all ${activeTab === 'quiz' ? 'bg-[#f9f6f0] shadow-sm' : ''}`}>
+                      <Zap size={18} className={activeTab === 'quiz' ? 'text-[#e07a48]' : 'text-[#9e9590]'} />
+                    </div>
+                    <span className="text-[10px] mt-0.5 tracking-wider">測驗</span>
+                  </button>
+
+                  {/* 4. 設定與章節選單 (Menu / Settings) */}
+                  <button
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="flex flex-col items-center justify-center flex-1 py-1 text-[#9e9590] hover:text-[#6b6460] transition-all"
+                  >
+                    <div className="p-1 rounded-lg">
+                      <Sliders size={18} className="text-[#9e9590]" />
+                    </div>
+                    <span className="text-[10px] mt-0.5 tracking-wider">設定</span>
+                  </button>
+                </nav>
+              </main>
+            </div>
+          );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+
+        // Register Service Worker for PWA Offline Support
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+              .then(reg => console.log('ServiceWorker registration successful: ', reg.scope))
+              .catch(err => console.log('ServiceWorker registration failed: ', err));
           });
         }
-      });
-    });
-  </script>
-
-</body></html>
+    </script>
+</body>
+</html>
