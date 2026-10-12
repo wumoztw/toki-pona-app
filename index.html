@@ -67,6 +67,7 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f0ede8; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #c8c3bc; border-radius: 3px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #b5a8a0; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
         body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; background-color: #f9f6f0; color: #2c2825; }
     
         /* --- Stitch Aesthetics Enhancements --- */
@@ -539,7 +540,7 @@
                 {/* Top Bar - Modern Sticky Navbar */}
                 <header className="h-16 border-b flex items-center justify-between px-4 md:px-8 z-40 flex-shrink-0 sticky top-0" style={{backgroundColor: "#f9f6f0", borderColor: "#e0dbd3", boxShadow: "0 1px 3px rgba(44,40,37,0.06)"}}>
                   {/* Left Section: Brand & Slogan */}
-                  <div className="flex items-center gap-3 md:gap-4 min-w-0">
+                  <div className="flex items-center gap-2 md:hidden min-w-0">
                     <span className="text-2xl select-none flex-shrink-0" style={{color: "#5b7b5a"}}>🌱</span>
                     <div className="hidden sm:block">
                       <span className="text-base sm:text-lg md:text-xl font-bold tracking-tight" style={{color: "#2c2825"}}>Toki Pona App</span>
@@ -552,7 +553,7 @@
                   </div>
 
                   {/* Middle Section: Core Function Tabs */}
-                  <nav className="flex items-center gap-1 mx-auto md:mx-0" role="tablist" aria-label="主要功能分頁">
+                  <nav className="hidden md:flex items-center gap-1 mx-auto md:mx-0" role="tablist" aria-label="主要功能分頁">
                     <button
                       role="tab"
                       aria-selected={activeTab === 'learn'}
@@ -618,7 +619,7 @@
                         title="點擊切換語言"
                       >
                         <Globe size={14} style={{color: "#5b7b5a"}} />
-                        <span className="hidden sm:inline">{lang === 'zh' ? '繁中' : lang === 'en' ? 'EN' : '日本語'}</span>
+                        <span className="inline text-xs">{lang === 'zh' ? '繁中' : lang === 'en' ? 'EN' : '日本語'}</span>
                         <ChevronRight size={12} style={{color: "#9e9590"}} />
                       </button>
                     </div>
@@ -637,7 +638,7 @@
                 <div className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8 scroll-smooth" style={{backgroundColor: "#f9f6f0"}}>
                   {/* Chapter Pill Navigation (Learn Mode) */}
                   {activeTab === 'learn' && (
-                    <div className="mb-6 overflow-x-auto pb-2 px-2 -mx-2 md:mx-0 md:px-0" style={{scrollbarWidth: 'none'}}>
+                    <div className="mb-6 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 no-scrollbar" style={{scrollbarWidth: 'none'}}>
                       <div className="flex gap-2 min-w-max" style={{scrollSnapType: 'x mandatory'}}>
                         {window.VOCAB_DATA.map(cat => (
                           <button
@@ -1390,6 +1391,12 @@
               
                 {/* ==================== 行動端底部導航列 (Mobile Bottom Nav) ==================== */}
                 
+                {/* Bottom Mobile Nav Bar */}
+                <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around gap-2 px-3 py-2 backdrop-blur-xl bg-white/70 border-t border-[#e0dbd3]/60 shadow-[0_-4px_20px_rgba(44,40,37,0.08)]" aria-label="手機導覽" role="tablist">
+                  <button onClick={() => { setActiveTab('learn'); setSearchTerm(''); }} className={"flex-1 py-2 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap " + (activeTab === 'learn' ? 'bg-[#5b7b5a] text-white shadow-sm' : 'text-[#6b6460] hover:bg-[#ece8e2]')}>學習單字</button>
+                  <button onClick={() => { setActiveTab('all'); setSearchTerm(''); }} className={"flex-1 py-2 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap " + (activeTab === 'all' ? 'bg-[#5b7b5a] text-white shadow-sm' : 'text-[#6b6460] hover:bg-[#ece8e2]')}>全詞彙字典</button>
+                  <button onClick={() => { setActiveTab('quiz'); setQuizState('start'); }} className={"flex-1 py-2 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap " + (activeTab === 'quiz' ? 'bg-[#e07a48] text-white shadow-sm' : 'text-[#6b6460] hover:bg-[#ece8e2]')}>隨堂測驗</button>
+                </nav>
               </main>
             </div>
           );
