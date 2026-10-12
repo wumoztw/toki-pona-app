@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toki-pona-v2';
+const CACHE_NAME = 'toki-pona-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
