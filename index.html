@@ -162,8 +162,7 @@
           const [selectedCategory, setSelectedCategory] = useState(window.VOCAB_DATA[0]);
           const [searchTerm, setSearchTerm] = useState('');
           const [activeTab, setActiveTab] = useState('learn'); // 'learn', 'all', 'quiz'
-          const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
+          
           // 語言設定 ('zh' | 'en' | 'ja')
           const [lang, setLang] = useState(() => {
             try {
@@ -348,7 +347,6 @@
             return list;
           }, [selectedCategory, searchTerm, activeTab, allWordsWithKey, statusFilter, masteredWords, notes]);
 
-
           // --- 3. 互動式測驗模式 (Quiz Mode) ---
           const [quizState, setQuizState] = useState('start'); // 'start' | 'playing' | 'result'
           const [quizQuestions, setQuizQuestions] = useState([]);
@@ -528,237 +526,141 @@
             }
           };
 
-
           return (
             <div className="flex h-screen text-[#2c2825] font-sans overflow-hidden" style={{backgroundColor: '#f9f6f0'}}>
               
-              {/* Mobile Sidebar Toggle */}
-              <div className={`fixed inset-0 bg-black/30 z-20 md:hidden transition-opacity ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
-                   onClick={() => setIsSidebarOpen(false)} />
+              
 
-              {/* Sidebar Navigation */}
-              <aside className={`
-                absolute md:relative z-30 w-72 flex flex-col h-full transition-transform duration-300
-                ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-              `} style={{backgroundColor: '#f0ede8', borderRight: '1px solid #e0dbd3'}}>
-                <div className="p-6 flex justify-between items-center" style={{borderBottom: "1px solid #e0dbd3", backgroundColor: "#f0ede8"}}>
-                  <div>
-                    <h1 className="text-2xl font-bold text-[#2c2825] tracking-wider flex items-center gap-2">
-                      <Book className="text-[#5b7b5a]" />
-                      TOKI PONA
-                    </h1>
-                    <p className="text-xs mt-1 uppercase tracking-widest" style={{color: "#9e9590"}}>留白習字 · 簡約之語</p>
-                  </div>
-                  <button onClick={() => setIsSidebarOpen(false)} className="md:hidden hover:opacity-70" style={{color: "#9e9590"}}>
-                    <X size={24} />
-                  </button>
-                </div>
-
-                {/* 學習進度摘要卡片 */}
-                <div className="px-6 py-4" style={{backgroundColor: "#ece8e2", borderBottom: "1px solid #e0dbd3"}}>
-                  <div className="flex justify-between text-xs font-bold mb-1.5" style={{color: "#6b6460"}}>
-                    <span>學習進度掌握</span>
-                    <span className="font-bold" style={{color: "#5b7b5a"}}>{masteredCount} / {totalWordsCount} 詞 ({masteryPercentage}%)</span>
-                  </div>
-                  <div className="w-full h-2 rounded-full overflow-hidden" style={{backgroundColor: "#e0dbd3"}}>
-                    <div className="h-full transition-all duration-500" style={{backgroundColor: "#5b7b5a", width: `${masteryPercentage}%`}}></div>
-                  </div>
-                </div>
-
-                <nav className="flex-1 overflow-y-auto py-4 space-y-1 custom-scrollbar" style={{backgroundColor: "#f0ede8"}}>
-                  <div className="px-6 mb-2 text-xs font-bold uppercase tracking-wider" style={{color: "#9e9590", letterSpacing: "0.12em"}}>章節導航</div>
-                  {window.VOCAB_DATA.map(cat => (
-                    <button
-                      key={cat.id}
-                      onClick={() => {
-                        setSelectedCategory(cat);
-                        setActiveTab('learn');
-                        setSearchTerm('');
-                        if (window.innerWidth < 768) setIsSidebarOpen(false);
-                      }}
-                      className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-all
-                        ${selectedCategory.id === cat.id && activeTab === 'learn'
-                          ? 'text-[#2c2825] font-semibold' + ' ' + 'bg-[#f9f6f0]' + ' ' + 'border-l-[3px] border-[#5b7b5a]' 
-                          : 'hover:bg-[#ece8e2] text-[#6b6460] hover:text-[#2c2825]'}
-                      `}
-                    >
-                      <span className={selectedCategory.id === cat.id && activeTab === 'learn' ? 'text-[#5b7b5a]' : 'text-[#9e9590]'}>
-                        {renderIcon(cat.icon)}
-                      </span>
-                      <span className="truncate">{cat.title.split('(')[0]}</span>
-                    </button>
-                  ))}
-                  
-                  <div className="mt-6 px-6 mb-2 text-xs font-bold uppercase tracking-wider" style={{color: "#9e9590", letterSpacing: "0.12em"}}>工具 & 練習</div>
-                  <button
-                     onClick={() => {
-                       setActiveTab('all');
-                       if (window.innerWidth < 768) setIsSidebarOpen(false);
-                     }}
-                     className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors
-                        ${activeTab === 'all'
-                          ? 'text-[#2c2825] font-semibold bg-[#f9f6f0] border-l-[3px] border-[#5b7b5a]' 
-                          : 'hover:bg-[#ece8e2] text-[#6b6460] hover:text-[#2c2825]'}
-                      `}
-                  >
-                    <Search size={20} className={activeTab === 'all' ? 'text-[#5b7b5a]' : 'text-[#9e9590]'} />
-                    <span>全詞彙字典 (Dictionary)</span>
-                  </button>
-
-                  <button
-                     onClick={() => {
-                       setActiveTab('quiz');
-                       setQuizState('start');
-                       if (window.innerWidth < 768) setIsSidebarOpen(false);
-                     }}
-                     className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors
-                        ${activeTab === 'quiz'
-                          ? 'text-[#2c2825] font-semibold bg-[#f9f6f0] border-l-[3px] border-[#e07a48]' 
-                          : 'hover:bg-[#ece8e2] text-[#6b6460] hover:text-[#2c2825]'}
-                      `}
-                  >
-                    <Zap size={20} className={activeTab === 'quiz' ? 'text-[#e07a48]' : 'text-[#e07a48]'} />
-                    <span>隨堂測驗 (Quiz Mode)</span>
-                  </button>
-                </nav>
-
-                {/* 顯示與語言設定 (Sidebar Settings) */}
-                <div className="p-4 text-xs flex-shrink-0" style={{borderTop: "1px solid #e0dbd3", backgroundColor: "#f0ede8"}}>
-                  <div className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5" style={{color: "#6b6460", letterSpacing: "0.1em"}}>
-                    <Sliders size={14} style={{color: "#9e9590"}} />
-                    <span>偏好與顯示設定</span>
-                  </div>
-
-                  {/* Sitelen Pona Toggle */}
-                  <div className="mb-3 p-2.5 rounded-xl flex items-center justify-between" style={{backgroundColor: "#ece8e2", border: "1px solid #e0dbd3"}}>
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="sitelen-pona text-2xl text-amber-400 leading-none select-none flex-shrink-0">toki</span>
-                      <div className="min-w-0">
-                        <div className="font-bold text-xs truncate" style={{color: "#2c2825"}}>Sitelen Pona</div>
-                        <div className="text-[10px]" style={{color: "#9e9590"}}>象形文字顯示</div>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setShowSitelen(prev => !prev)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 flex-shrink-0 ${
-                        showSitelen 
-                          ? 'bg-[#e07a48] text-white shadow-md ring-2 ring-[#e07a48]/30' 
-                          : 'text-[#9e9590] hover:text-[#2c2825]' + ' ' + 'border border-[#e0dbd3] hover:bg-[#ece8e2]'
-                      }`}
-                      title={showSitelen ? '點擊關閉象形文字' : '點擊開啟象形文字'}
-                    >
-                      <span className={`w-1.5 h-1.5 rounded-full ${showSitelen ? 'bg-white' : 'bg-[#b5a8a0]'}`}></span>
-                      <span>{showSitelen ? '已開啟' : '已關閉'}</span>
-                    </button>
-                  </div>
-
-                  {/* Language Selector */}
-                  <div className="p-2.5 rounded-xl" style={{backgroundColor: "#ece8e2", border: "1px solid #e0dbd3"}}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-bold text-xs flex items-center gap-1.5" style={{color: "#2c2825"}}>
-                        <Globe size={13} style={{color: "#5b7b5a"}} />
-                        釋義語言
-                      </span>
-                      <span className="text-[10px]" style={{color: "#6b6460"}}>
-                        {lang === 'zh' ? '繁體中文' : lang === 'en' ? 'English' : '日本語'}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-1 p-1 rounded-lg" style={{backgroundColor: "#f0ede8", border: "1px solid #e0dbd3"}}>
-                      {[
-                        { id: 'zh', label: '繁中' },
-                        { id: 'en', label: 'EN' },
-                        { id: 'ja', label: '日本語' }
-                      ].map(l => (
-                        <button
-                          key={l.id}
-                          onClick={() => setLang(l.id)}
-                          className={`py-1 rounded text-center text-[11px] font-semibold transition-all ${
-                            lang === l.id 
-                              ? 'bg-[#5b7b5a] text-white shadow-sm' 
-                              : 'text-[#6b6460] hover:text-[#2c2825] hover:bg-[#ece8e2]'
-                          }`}
-                        >
-                          {l.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-4 text-xs" style={{borderTop: "1px solid #e0dbd3", backgroundColor: "#ece8e2", color: "#9e9590"}}>
-                  <div className="flex justify-between">
-                    <span>Toki Pona App</span>
-                    <span>v3.0 Stitch Edition</span>
-                  </div>
-                </div>
-              </aside>
+              
 
               {/* Main Content Area */}
               <main className="flex-1 flex flex-col h-full overflow-hidden w-full relative" style={{backgroundColor: "#f9f6f0"}}>
                 
-                {/* Top Bar */}
-                <header className="h-16 border-b flex items-center justify-between px-3 md:px-8 z-10 flex-shrink-0" style={{backgroundColor: "#f9f6f0", borderColor: "#e0dbd3", boxShadow: "0 1px 3px rgba(44,40,37,0.06)"}}>
-                  <div className="flex items-center gap-3 md:gap-4 min-w-0 mr-2">
-                     <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-1.5 rounded-lg flex-shrink-0 hover:bg-[#ece8e2]" style={{color: "#6b6460"}}>
-                       <Menu size={22} />
-                     </button>
-                     
-                     <div className="flex items-center gap-2.5">
-                       <span className="text-2xl select-none flex-shrink-0" style={{color: "#5b7b5a"}}>🌱</span>
-                       <span className="text-base sm:text-lg md:text-xl font-bold tracking-tight hidden sm:inline" style={{color: "#2c2825"}}>Toki Pona App</span>
-                     </div>
-                     <span className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold" style={{backgroundColor: "#f0f5f1", color: "#5b7b5a", border: "1px solid #c8dbc8"}}>Stitch Edition</span>
+                {/* Top Bar - Modern Sticky Navbar */}
+                <header className="h-16 border-b flex items-center justify-between px-4 md:px-8 z-40 flex-shrink-0 sticky top-0" style={{backgroundColor: "#f9f6f0", borderColor: "#e0dbd3", boxShadow: "0 1px 3px rgba(44,40,37,0.06)"}}>
+                  {/* Left Section: Brand & Slogan */}
+                  <div className="flex items-center gap-3 md:gap-4 min-w-0">
+                    <span className="text-2xl select-none flex-shrink-0" style={{color: "#5b7b5a"}}>🌱</span>
+                    <div className="hidden sm:block">
+                      <span className="text-base sm:text-lg md:text-xl font-bold tracking-tight" style={{color: "#2c2825"}}>Toki Pona App</span>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded font-mono" style={{backgroundColor: "#f0f5f1", color: "#5b7b5a", border: "1px solid #c8dbc8"}}>道本語</span>
+                        <span className="text-xs text-[#6b6460] hidden md:inline">lipu pi toki pona · the simple life of good things</span>
+                      </div>
+                    </div>
+                    <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold" style={{backgroundColor: "#f0f5f1", color: "#5b7b5a", border: "1px solid #c8dbc8"}}>Stitch Edition</span>
                   </div>
 
-                  <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                    {/* 快速篩選列 (在桌面端 md 以上顯示於 header) */}
-                    {(activeTab === 'learn' || activeTab === 'all') && (
-                      <div className="hidden md:flex p-1 rounded-lg text-xs font-medium flex-shrink-0" style={{backgroundColor: "#ece8e2"}}>
-                        <button
-                          onClick={() => setStatusFilter('all')}
-                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'all' ? 'bg-white text-[#2c2825] shadow-sm font-semibold' : 'text-[#9e9590] hover:text-[#2c2825]'}`}
-                        >
-                          全部
-                        </button>
-                        <button
-                          onClick={() => setStatusFilter('mastered')}
-                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'mastered' ? 'bg-[#6f906a] text-white shadow-sm font-semibold' : 'text-[#9e9590] hover:text-[#2c2825]'}`}
-                        >
-                          已學會 ({masteredCount})
-                        </button>
-                        <button
-                          onClick={() => setStatusFilter('unmastered')}
-                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'unmastered' ? 'bg-[#5b7b5a] text-white shadow-sm font-semibold' : 'text-[#9e9590] hover:text-[#2c2825]'}`}
-                        >
-                          未學會 ({totalWordsCount - masteredCount})
-                        </button>
-                        <button
-                          onClick={() => setStatusFilter('noted')}
-                          className={`px-3 py-1.5 rounded-md transition-all ${statusFilter === 'noted' ? 'bg-[#e07a48] text-white shadow-sm font-semibold' : 'text-[#9e9590] hover:text-[#2c2825]'}`}
-                        >
-                          筆記 ({notedCount})
-                        </button>
-                      </div>
-                    )}
+                  {/* Middle Section: Core Function Tabs */}
+                  <nav className="flex items-center gap-1 mx-auto md:mx-0" role="tablist" aria-label="主要功能分頁">
+                    <button
+                      role="tab"
+                      aria-selected={activeTab === 'learn'}
+                      onClick={() => { setActiveTab('learn'); setSearchTerm(''); }}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                        activeTab === 'learn' ? 'bg-[#5b7b5a] text-white shadow-sm' : 'text-[#6b6460] hover:text-[#2c2825] hover:bg-[#ece8e2]'
+                      }`}
+                    >
+                      <Book size={16} className="inline-block mr-1.5" /> 學習單字
+                    </button>
+                    <button
+                      role="tab"
+                      aria-selected={activeTab === 'all'}
+                      onClick={() => { setActiveTab('all'); setSearchTerm(''); }}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                        activeTab === 'all' ? 'bg-[#5b7b5a] text-white shadow-sm' : 'text-[#6b6460] hover:text-[#2c2825] hover:bg-[#ece8e2]'
+                      }`}
+                    >
+                      <Search size={16} className="inline-block mr-1.5" /> 全詞彙字典
+                    </button>
+                    <button
+                      role="tab"
+                      aria-selected={activeTab === 'quiz'}
+                      onClick={() => { setActiveTab('quiz'); setQuizState('start'); }}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                        activeTab === 'quiz' ? 'bg-[#e07a48] text-white shadow-sm' : 'text-[#6b6460] hover:text-[#2c2825] hover:bg-[#ece8e2]'
+                      }`}
+                    >
+                      <Zap size={16} className="inline-block mr-1.5" /> 隨堂測驗
+                    </button>
+                  </nav>
 
-                    {activeTab === 'all' && (
-                      <div className="hidden md:block relative w-48 md:w-56">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{color: "#9e9590"}} />
-                        <input 
-                          type="text" 
-                          placeholder="搜尋單字..." 
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="pl-9 pr-4 py-1.5 rounded-full text-sm focus:ring-2 focus:ring-[#5b7b5a] w-full transition-all" style={{backgroundColor: "#ece8e2", border: "1px solid #e0dbd3", color: "#2c2825"}}
-                        />
-                      </div>
-                    )}
+                  {/* Right Section: Sitelen Toggle, Language, Mastery Progress */}
+                  <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    {/* Sitelen Pona Toggle */}
+                    <button
+                      onClick={() => setShowSitelen(prev => !prev)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                        showSitelen
+                          ? 'bg-[#e07a48] text-white shadow-sm ring-2 ring-[#e07a48]/30'
+                          : 'text-[#6b6460] hover:text-[#2c2825] hover:bg-[#ece8e2] border border-[#e0dbd3]'
+                      }`}
+                      title={showSitelen ? '關閉象形文字' : '開啟象形文字'}
+                      aria-label={showSitelen ? '關閉 Sitelen Pona' : '開啟 Sitelen Pona'}
+                    >
+                      <span className="sitelen-pona text-lg leading-none select-none" style={{color: showSitelen ? 'white' : '#e07a48'}}>
+                        toki
+                      </span>
+                      <span className="hidden sm:inline">{showSitelen ? '象形文開啟' : '象形文關閉'}</span>
+                    </button>
+
+                    {/* Language Selector */}
+                    <div className="relative">
+                      <button
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border border-[#e0dbd3] hover:bg-[#ece8e2] whitespace-nowrap"
+                        style={{backgroundColor: "#f9f6f0", color: "#6b6460"}}
+                        onClick={() => {
+                          const langs = ['zh', 'en', 'ja'];
+                          const idx = langs.indexOf(lang);
+                          setLang(langs[(idx + 1) % langs.length]);
+                        }}
+                        aria-label="切換語言"
+                        title="點擊切換語言"
+                      >
+                        <Globe size={14} style={{color: "#5b7b5a"}} />
+                        <span className="hidden sm:inline">{lang === 'zh' ? '繁中' : lang === 'en' ? 'EN' : '日本語'}</span>
+                        <ChevronRight size={12} style={{color: "#9e9590"}} />
+                      </button>
+                    </div>
+
+                    {/* Mastery Progress Capsule */}
+                    <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-mono font-bold" style={{backgroundColor: "#f5f3ef", borderColor: "#e0dbd3", color: "#5b7b5a"}}>
+                      <span>{masteredCount}</span>
+                      <span style={{color: "#9e9590"}}>/</span>
+                      <span>{totalWordsCount}</span>
+                      <span className="ml-1 px-2 py-0.5 rounded-full text-[10px]" style={{backgroundColor: "#5b7b5a", color: "white"}}>{masteryPercentage}%</span>
+                    </div>
                   </div>
                 </header>
 
                 {/* Scrollable Content */}
                 <div className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8 scroll-smooth" style={{backgroundColor: "#f9f6f0"}}>
-                  <div className="max-w-6xl mx-auto">
+                  {/* Chapter Pill Navigation (Learn Mode) */}
+                  {activeTab === 'learn' && (
+                    <div className="mb-6 overflow-x-auto pb-2 px-2 -mx-2 md:mx-0 md:px-0" style={{scrollbarWidth: 'none'}}>
+                      <div className="flex gap-2 min-w-max" style={{scrollSnapType: 'x mandatory'}}>
+                        {window.VOCAB_DATA.map(cat => (
+                          <button
+                            key={cat.id}
+                            onClick={() => {
+                              setSelectedCategory(cat);
+                              setActiveTab('learn');
+                              setSearchTerm('');
+                            }}
+                            className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap scroll-snap-start ${
+                              selectedCategory.id === cat.id
+                                ? 'bg-[#5b7b5a] text-white shadow-sm ring-2 ring-[#5b7b5a]/30'
+                                : 'text-[#6b6460] hover:text-[#2c2825] hover:bg-[#ece8e2] border border-[#e0dbd3]'
+                            }`}
+                          >
+                            <span className="inline-block mr-1.5">{renderIcon(cat.icon)}</span>
+                            {cat.title.split('(')[0]}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div className="max-w-7xl mx-auto">
                     
                     {/* === 1. LEARN MODE & ALL MODE === */}
                     {activeTab !== 'quiz' && (
@@ -1113,7 +1015,6 @@
                         )}
                       </>
                     )}
-
 
                     {/* === 3. QUIZ MODE === */}
                     {activeTab === 'quiz' && (
@@ -1488,65 +1389,7 @@
                 </div>
               
                 {/* ==================== 行動端底部導航列 (Mobile Bottom Nav) ==================== */}
-                <nav className="md:hidden flex items-center justify-around h-16 border-t z-20 flex-shrink-0 select-none shadow-[0_-2px_10px_rgba(44,40,37,0.04)]" style={{backgroundColor: '#f0ede8', borderColor: '#e0dbd3'}}>
-                  {/* 1. 學習 (Learn) */}
-                  <button
-                    onClick={() => {
-                      setActiveTab('learn');
-                      if (!selectedCategory) setSelectedCategory(window.VOCAB_DATA[0]);
-                    }}
-                    className={`flex flex-col items-center justify-center flex-1 py-1 transition-all ${
-                      activeTab === 'learn' ? 'text-[#2c2825] font-bold' : 'text-[#9e9590] hover:text-[#6b6460]'
-                    }`}
-                  >
-                    <div className={`p-1 rounded-lg transition-all ${activeTab === 'learn' ? 'bg-[#f9f6f0] shadow-sm' : ''}`}>
-                      <Book size={18} className={activeTab === 'learn' ? 'text-[#5b7b5a]' : 'text-[#9e9590]'} />
-                    </div>
-                    <span className="text-[10px] mt-0.5 tracking-wider">學習</span>
-                  </button>
-
-                  {/* 2. 全詞彙字典 (Dictionary) */}
-                  <button
-                    onClick={() => {
-                      setActiveTab('all');
-                    }}
-                    className={`flex flex-col items-center justify-center flex-1 py-1 transition-all ${
-                      activeTab === 'all' ? 'text-[#2c2825] font-bold' : 'text-[#9e9590] hover:text-[#6b6460]'
-                    }`}
-                  >
-                    <div className={`p-1 rounded-lg transition-all ${activeTab === 'all' ? 'bg-[#f9f6f0] shadow-sm' : ''}`}>
-                      <Search size={18} className={activeTab === 'all' ? 'text-[#5b7b5a]' : 'text-[#9e9590]'} />
-                    </div>
-                    <span className="text-[10px] mt-0.5 tracking-wider">字典</span>
-                  </button>
-
-                  {/* 3. 隨堂測驗 (Quiz) */}
-                  <button
-                    onClick={() => {
-                      setActiveTab('quiz');
-                      setQuizState('start');
-                    }}
-                    className={`flex flex-col items-center justify-center flex-1 py-1 transition-all ${
-                      activeTab === 'quiz' ? 'text-[#2c2825] font-bold' : 'text-[#9e9590] hover:text-[#6b6460]'
-                    }`}
-                  >
-                    <div className={`p-1 rounded-lg transition-all ${activeTab === 'quiz' ? 'bg-[#f9f6f0] shadow-sm' : ''}`}>
-                      <Zap size={18} className={activeTab === 'quiz' ? 'text-[#e07a48]' : 'text-[#9e9590]'} />
-                    </div>
-                    <span className="text-[10px] mt-0.5 tracking-wider">測驗</span>
-                  </button>
-
-                  {/* 4. 設定與章節選單 (Menu / Settings) */}
-                  <button
-                    onClick={() => setIsSidebarOpen(true)}
-                    className="flex flex-col items-center justify-center flex-1 py-1 text-[#9e9590] hover:text-[#6b6460] transition-all"
-                  >
-                    <div className="p-1 rounded-lg">
-                      <Sliders size={18} className="text-[#9e9590]" />
-                    </div>
-                    <span className="text-[10px] mt-0.5 tracking-wider">設定</span>
-                  </button>
-                </nav>
+                
               </main>
             </div>
           );
