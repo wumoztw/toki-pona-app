@@ -681,7 +681,7 @@
                 <div className="p-4 text-xs" style={{borderTop: "1px solid #e0dbd3", backgroundColor: "#ece8e2", color: "#9e9590"}}>
                   <div className="flex justify-between">
                     <span>Toki Pona App</span>
-                    <span>v2.5 LocalStorage</span>
+                    <span>v3.0 Stitch Edition</span>
                   </div>
                 </div>
               </aside>
@@ -691,25 +691,16 @@
                 
                 {/* Top Bar */}
                 <header className="h-16 border-b flex items-center justify-between px-3 md:px-8 z-10 flex-shrink-0" style={{backgroundColor: "#f9f6f0", borderColor: "#e0dbd3", boxShadow: "0 1px 3px rgba(44,40,37,0.06)"}}>
-                  <div className="flex items-center gap-2 md:gap-4 min-w-0 mr-2">
+                  <div className="flex items-center gap-3 md:gap-4 min-w-0 mr-2">
                      <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-1.5 rounded-lg flex-shrink-0 hover:bg-[#ece8e2]" style={{color: "#6b6460"}}>
                        <Menu size={22} />
                      </button>
                      
-                     <h2 className="text-base sm:text-lg md:text-xl font-bold flex items-center gap-2 truncate" style={{color: "#2c2825"}}>
-                      {activeTab === 'learn' ? (
-                        <>
-                          <span className={`p-1.5 rounded-lg bg-[#5b7b5a] text-white shadow-sm hidden md:block flex-shrink-0`}>
-                            {renderIcon(selectedCategory.icon)}
-                          </span>
-                          <span className="truncate">{selectedCategory.title}</span>
-                        </>
-                      ) : activeTab === 'all' ? (
-                        '全詞彙字典'
-                      ) : (
-                        '隨堂測驗'
-                      )}
-                    </h2>
+                     <div className="flex items-center gap-2.5">
+                       <span className="text-2xl select-none flex-shrink-0" style={{color: "#5b7b5a"}}>🌱</span>
+                       <span className="text-base sm:text-lg md:text-xl font-bold tracking-tight hidden sm:inline" style={{color: "#2c2825"}}>Toki Pona App</span>
+                     </div>
+                     <span className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold" style={{backgroundColor: "#f0f5f1", color: "#5b7b5a", border: "1px solid #c8dbc8"}}>Stitch Edition</span>
                   </div>
 
                   <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
